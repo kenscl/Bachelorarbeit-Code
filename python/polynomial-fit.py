@@ -3,6 +3,9 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
+#
+# Value Generator
+#
 def generate_data_array_with_errors(max, min, len, stdev):
     data = list()
     data = [random.uniform(min, max) for _ in range(len)]
@@ -10,9 +13,13 @@ def generate_data_array_with_errors(max, min, len, stdev):
     data_noise = data.copy()
     for i in range(len):
         noise = np.random.normal(0, stdev)
-        data_noise[i] += noise + np.sin(0.2 * data[i]) + 2 * np.cos(0.1 * data[i])
+        data_noise[i] += noise + np.sin(0.2 * data[i]) + 0.5 * np.cos(1 * data[i])
 
     return data, data_noise
+
+#
+# Polynomial Regression
+#
 
 
 def create_design_matrix(degree, x):
@@ -30,24 +37,77 @@ def polynomial_regression(order, data, noise):
     Y = np.array(data)
     return (np.linalg.inv(X.T @ X) @ X.T @ Y)[::-1]
 
+#
+# Linear Interpolation
+#
+
+
+'''
+generate_correcton_data_linear_interpolation(data, noise) generates a
+dictornary filled with data that is ment to be added to a measurement to correct
+it.
+linera_interpolation(measurement, correction_data) finds the nearest two values
+from the correction_data dict and linearly interpolates them returning the
+estimated value
+'''
+
+
+def generate_correcton_data_linear_interpolation(data: list, noise: list) -> list:
+    correction_data = list()
+    for i in range(len(data)):
+        correction_data.append(data[i] - noise[i])
+    return correction_data
+
+
+def linear_interpolation(x: float, noise: list, correction_data: list, gt_data):
+    largest_left = [0, -100]
+    largest_right = [0, 100]
+    for i, val in enumerate(noise):
+        if (val > largest_left[1] and val <= x):
+            largest_left = [i, val]
+        if (val < largest_right[1] and val >= x):
+            largest_right = [i, val]
+
+    d = abs(largest_left[1] - largest_right[1])
+    val_left = correction_data[largest_left[0]] * (1 - abs(largest_left[1] - x) / d)
+    val_right = correction_data[largest_right[0]] *  (1 - abs(x - largest_right[1]) / d)
+    print(largest_left[0])
+    corrected_value = x + val_right + val_left
+    return corrected_value
+
+
+#
+# Test Code
+#
+
 
 order = 7
-data, noise = generate_data_array_with_errors(55, 0, 550, 0.1)
+data_pre, noise_pre = generate_data_array_with_errors(55, -55, 11000, 0.1)
+data = data_pre[::2]
+data_test_values = data_pre[1::2]
+noise = noise_pre[::2]
+noise_test_values = noise_pre[1::2]
 
-weights = polynomial_regression(order, data, noise)
+#weights = polynomial_regression(order, data, noise)
+#polynomial = np.poly1d(weights)
 
-print(weights)
-
-polynomial = np.poly1d(weights)
-
-x_values = np.linspace(0, 55, 100)
-y_pol = polynomial(x_values)
-y_values = polynomial(noise)
+correction_data = generate_correcton_data_linear_interpolation(data, noise)
 
 
-plt.plot(data, y_values, label='corrected data')
-plt.plot(x_values, y_pol, label='polynomial')
+x_values = np.linspace(-55, 55, 1000)
+#y_pol = polynomial(x_values)
+#y_values = polynomial(noise)
+
+linear_corrected = list()
+#print(correction_data)
+for i in range(len(noise_test_values)):
+    linear_corrected.append(linear_interpolation(noise_test_values[i], noise, correction_data, data_test_values[i]))
+
+
+#plt.plot(data, y_values, label='corrected data')
+#plt.plot(x_values, y_pol, label='polynomial')
 plt.plot(x_values, x_values, label='ideal data')
+plt.plot(data, linear_corrected, label='linear corrected')
 plt.scatter(data, noise, label='data')
 plt.legend()
 plt.show()
