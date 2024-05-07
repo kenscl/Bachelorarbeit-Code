@@ -1,1 +1,0 @@
-/usr/bin/c++ -m32 "CMakeFiles/core_fast_initiator_cpp-bin.dir/core-fast/initiator.cpp.o" -o core_fast_initiator_cpp-bin  ../librodos.a

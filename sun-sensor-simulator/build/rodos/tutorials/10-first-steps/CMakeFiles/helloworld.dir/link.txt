@@ -1,1 +1,0 @@
-/usr/bin/c++ -m32 CMakeFiles/helloworld.dir/helloworld.cpp.o -o helloworld  ../../librodos.a

@@ -1,1 +1,0 @@
-/usr/bin/c++ -m32 "CMakeFiles/core_fast_semaphore_worm_cpp-bin.dir/core-fast/semaphore-worm.cpp.o" -o core_fast_semaphore_worm_cpp-bin  ../librodos.a

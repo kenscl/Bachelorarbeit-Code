@@ -1,1 +1,0 @@
-/usr/bin/c++ -m32 "CMakeFiles/middleware_tests_receiver_commbuffer_cpp-bin.dir/middleware-tests/receiver-commbuffer.cpp.o" -o middleware_tests_receiver_commbuffer_cpp-bin  ../librodos.a

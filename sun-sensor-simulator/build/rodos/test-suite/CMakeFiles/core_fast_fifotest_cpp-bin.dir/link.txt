@@ -1,1 +1,0 @@
-/usr/bin/c++ -m32 "CMakeFiles/core_fast_fifotest_cpp-bin.dir/core-fast/fifotest.cpp.o" -o core_fast_fifotest_cpp-bin  ../librodos.a

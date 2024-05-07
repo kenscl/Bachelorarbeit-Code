@@ -1,1 +1,0 @@
-/usr/bin/c++ -m32 "CMakeFiles/loop-timeevent.dir/loop-timeevent.cpp.o" -o loop-timeevent  ../../../librodos.a

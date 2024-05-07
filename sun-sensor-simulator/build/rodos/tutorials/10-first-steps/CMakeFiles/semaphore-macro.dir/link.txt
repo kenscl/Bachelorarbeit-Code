@@ -1,1 +1,0 @@
-/usr/bin/c++ -m32 "CMakeFiles/semaphore-macro.dir/semaphore-macro.cpp.o" -o semaphore-macro  ../../librodos.a

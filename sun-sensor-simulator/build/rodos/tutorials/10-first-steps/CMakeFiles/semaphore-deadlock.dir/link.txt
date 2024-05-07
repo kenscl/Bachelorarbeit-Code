@@ -1,1 +1,0 @@
-/usr/bin/c++ -m32 "CMakeFiles/semaphore-deadlock.dir/semaphore-deadlock.cpp.o" -o semaphore-deadlock  ../../librodos.a

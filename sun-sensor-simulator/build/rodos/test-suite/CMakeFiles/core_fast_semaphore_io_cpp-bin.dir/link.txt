@@ -1,1 +1,0 @@
-/usr/bin/c++ -m32 "CMakeFiles/core_fast_semaphore_io_cpp-bin.dir/core-fast/semaphore-io.cpp.o" -o core_fast_semaphore_io_cpp-bin  ../librodos.a

@@ -1,1 +1,0 @@
-/usr/bin/c++ -m32 "CMakeFiles/middleware_tests_receiver_putter_cpp-bin.dir/middleware-tests/receiver-putter.cpp.o" -o middleware_tests_receiver_putter_cpp-bin  ../librodos.a

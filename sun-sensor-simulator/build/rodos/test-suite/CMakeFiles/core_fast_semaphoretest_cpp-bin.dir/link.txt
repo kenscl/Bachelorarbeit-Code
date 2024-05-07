@@ -1,1 +1,0 @@
-/usr/bin/c++ -m32 "CMakeFiles/core_fast_semaphoretest_cpp-bin.dir/core-fast/semaphoretest.cpp.o" -o core_fast_semaphoretest_cpp-bin  ../librodos.a

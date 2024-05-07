@@ -1,1 +1,0 @@
-/usr/bin/c++ -m32 "CMakeFiles/middleware_tests_receiver_subscriber_cpp-bin.dir/middleware-tests/receiver-subscriber.cpp.o" -o middleware_tests_receiver_subscriber_cpp-bin  ../librodos.a

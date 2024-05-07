@@ -1,1 +1,0 @@
-/usr/bin/c++ -m32 "CMakeFiles/core_fast_preemption_and_bussywaiting_cpp-bin.dir/core-fast/preemption-and-bussywaiting.cpp.o" -o core_fast_preemption_and_bussywaiting_cpp-bin  ../librodos.a

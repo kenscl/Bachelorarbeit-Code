@@ -1,1 +1,0 @@
-/usr/bin/c++ -m32 "CMakeFiles/core_fast_resumer_cpp-bin.dir/core-fast/resumer.cpp.o" -o core_fast_resumer_cpp-bin  ../librodos.a

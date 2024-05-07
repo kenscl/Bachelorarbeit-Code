@@ -1,1 +1,0 @@
-/usr/bin/c++ -m32 "CMakeFiles/core_fast_timewaitfor_cpp-bin.dir/core-fast/timewaitfor.cpp.o" -o core_fast_timewaitfor_cpp-bin  ../librodos.a

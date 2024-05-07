@@ -1,1 +1,0 @@
-/usr/bin/c++ -m32 "CMakeFiles/core_fast_printf_formats_cpp-bin.dir/core-fast/printf-formats.cpp.o" -o core_fast_printf_formats_cpp-bin  ../librodos.a

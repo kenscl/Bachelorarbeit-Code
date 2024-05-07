@@ -1,1 +1,0 @@
-/usr/bin/c++ -m32 "CMakeFiles/middleware_tests_alice_bob_charly_cpp-bin.dir/middleware-tests/alice-bob-charly.cpp.o" -o middleware_tests_alice_bob_charly_cpp-bin  ../librodos.a

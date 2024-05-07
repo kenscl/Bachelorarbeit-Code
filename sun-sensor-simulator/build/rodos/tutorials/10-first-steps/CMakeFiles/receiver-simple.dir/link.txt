@@ -1,1 +1,0 @@
-/usr/bin/c++ -m32 "CMakeFiles/receiver-simple.dir/receiver-simple.cpp.o" "CMakeFiles/receiver-simple.dir/sender.cpp.o" "CMakeFiles/receiver-simple.dir/topics.cpp.o" -o receiver-simple  ../../librodos.a

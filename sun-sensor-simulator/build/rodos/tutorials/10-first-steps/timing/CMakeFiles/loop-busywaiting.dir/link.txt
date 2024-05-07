@@ -1,1 +1,0 @@
-/usr/bin/c++ -m32 "CMakeFiles/loop-busywaiting.dir/loop-busywaiting.cpp.o" -o loop-busywaiting  ../../../librodos.a

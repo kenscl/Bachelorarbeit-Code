@@ -1,1 +1,0 @@
-/usr/bin/c++ -m32 CMakeFiles/basic.dir/basic.cpp.o -o basic  ../../librodos.a

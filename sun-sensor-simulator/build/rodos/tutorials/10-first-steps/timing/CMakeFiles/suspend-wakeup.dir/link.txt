@@ -1,1 +1,0 @@
-/usr/bin/c++ -m32 "CMakeFiles/suspend-wakeup.dir/suspend-wakeup.cpp.o" -o suspend-wakeup  ../../../librodos.a
