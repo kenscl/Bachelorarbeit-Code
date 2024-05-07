@@ -1,0 +1,1 @@
+/usr/bin/c++ -m32 "CMakeFiles/middleware_tests_middleware_simple_cpp-bin.dir/middleware-tests/middleware-simple.cpp.o" -o middleware_tests_middleware_simple_cpp-bin  ../librodos.a

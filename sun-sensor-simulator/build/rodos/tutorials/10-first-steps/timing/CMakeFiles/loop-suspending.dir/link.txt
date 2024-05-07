@@ -1,0 +1,1 @@
+/usr/bin/c++ -m32 "CMakeFiles/loop-suspending.dir/loop-suspending.cpp.o" -o loop-suspending  ../../../librodos.a

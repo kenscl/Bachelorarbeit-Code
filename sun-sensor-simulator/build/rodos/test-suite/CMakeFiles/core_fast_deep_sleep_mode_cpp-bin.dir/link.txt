@@ -1,0 +1,1 @@
+/usr/bin/c++ -m32 "CMakeFiles/core_fast_deep_sleep_mode_cpp-bin.dir/core-fast/deep-sleep-mode.cpp.o" -o core_fast_deep_sleep_mode_cpp-bin  ../librodos.a

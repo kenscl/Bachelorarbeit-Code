@@ -1,0 +1,1 @@
+/usr/bin/c++ -m32 "CMakeFiles/core_slow_barrier_test_cpp-bin.dir/core-slow/barrier-test.cpp.o" -o core_slow_barrier_test_cpp-bin  ../librodos.a

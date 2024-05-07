@@ -1,0 +1,1 @@
+/usr/bin/c++ -m32 "CMakeFiles/core_fast_mw_printf_cpp-bin.dir/core-fast/mw_printf.cpp.o" -o core_fast_mw_printf_cpp-bin  ../librodos.a

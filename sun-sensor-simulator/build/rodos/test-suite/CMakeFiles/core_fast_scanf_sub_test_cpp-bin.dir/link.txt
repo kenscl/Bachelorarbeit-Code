@@ -1,0 +1,1 @@
+/usr/bin/c++ -m32 "CMakeFiles/core_fast_scanf_sub_test_cpp-bin.dir/core-fast/scanf-sub-test.cpp.o" -o core_fast_scanf_sub_test_cpp-bin  ../librodos.a

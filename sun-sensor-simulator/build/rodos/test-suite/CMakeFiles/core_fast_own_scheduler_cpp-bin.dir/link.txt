@@ -1,0 +1,1 @@
+/usr/bin/c++ -m32 "CMakeFiles/core_fast_own_scheduler_cpp-bin.dir/core-fast/own-scheduler.cpp.o" -o core_fast_own_scheduler_cpp-bin  ../librodos.a

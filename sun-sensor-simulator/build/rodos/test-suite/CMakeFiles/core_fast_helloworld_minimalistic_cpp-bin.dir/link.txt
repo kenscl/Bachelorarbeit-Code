@@ -1,0 +1,1 @@
+/usr/bin/c++ -m32 "CMakeFiles/core_fast_helloworld_minimalistic_cpp-bin.dir/core-fast/helloworld-minimalistic.cpp.o" -o core_fast_helloworld_minimalistic_cpp-bin  ../librodos.a

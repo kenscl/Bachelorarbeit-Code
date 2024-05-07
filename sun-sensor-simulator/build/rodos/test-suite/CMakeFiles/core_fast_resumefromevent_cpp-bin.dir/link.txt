@@ -1,0 +1,1 @@
+/usr/bin/c++ -m32 "CMakeFiles/core_fast_resumefromevent_cpp-bin.dir/core-fast/resumefromevent.cpp.o" -o core_fast_resumefromevent_cpp-bin  ../librodos.a

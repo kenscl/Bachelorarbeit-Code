@@ -1,0 +1,1 @@
+/usr/bin/c++ -m32 CMakeFiles/event.dir/event.cpp.o -o event  ../../librodos.a

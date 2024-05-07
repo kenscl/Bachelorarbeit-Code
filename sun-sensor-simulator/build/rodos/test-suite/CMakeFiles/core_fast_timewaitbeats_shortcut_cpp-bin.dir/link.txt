@@ -1,0 +1,1 @@
+/usr/bin/c++ -m32 "CMakeFiles/core_fast_timewaitbeats_shortcut_cpp-bin.dir/core-fast/timewaitbeats-shortcut.cpp.o" -o core_fast_timewaitbeats_shortcut_cpp-bin  ../librodos.a

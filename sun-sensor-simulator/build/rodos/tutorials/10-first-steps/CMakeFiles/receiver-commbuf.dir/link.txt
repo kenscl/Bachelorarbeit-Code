@@ -1,0 +1,1 @@
+/usr/bin/c++ -m32 "CMakeFiles/receiver-commbuf.dir/receiver-commbuf.cpp.o" "CMakeFiles/receiver-commbuf.dir/sender.cpp.o" "CMakeFiles/receiver-commbuf.dir/topics.cpp.o" -o receiver-commbuf  ../../librodos.a

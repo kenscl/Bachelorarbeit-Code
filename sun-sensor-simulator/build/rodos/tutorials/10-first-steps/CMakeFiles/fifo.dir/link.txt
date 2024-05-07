@@ -1,0 +1,1 @@
+/usr/bin/c++ -m32 CMakeFiles/fifo.dir/fifo.cpp.o -o fifo  ../../librodos.a

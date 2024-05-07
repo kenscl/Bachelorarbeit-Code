@@ -1,0 +1,1 @@
+/usr/bin/c++ -m32 CMakeFiles/semaphore.dir/semaphore.cpp.o -o semaphore  ../../librodos.a

@@ -1,0 +1,1 @@
+/usr/bin/c++ -m32 "CMakeFiles/middleware_tests_datacollector_requester_cpp-bin.dir/middleware-tests/datacollector-requester.cpp.o" -o middleware_tests_datacollector_requester_cpp-bin  ../librodos.a

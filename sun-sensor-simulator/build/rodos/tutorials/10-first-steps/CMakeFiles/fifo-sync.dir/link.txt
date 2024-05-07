@@ -1,0 +1,1 @@
+/usr/bin/c++ -m32 "CMakeFiles/fifo-sync.dir/fifo-sync.cpp.o" -o fifo-sync  ../../librodos.a

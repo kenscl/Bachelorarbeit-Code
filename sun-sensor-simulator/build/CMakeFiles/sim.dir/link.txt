@@ -1,0 +1,1 @@
+/usr/bin/c++ -m32 -o sim  rodos/librodos.a

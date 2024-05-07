@@ -1,0 +1,1 @@
+/usr/bin/c++ -m32 "CMakeFiles/core_fast_activity_simple_cpp-bin.dir/core-fast/activity-simple.cpp.o" -o core_fast_activity_simple_cpp-bin  ../librodos.a

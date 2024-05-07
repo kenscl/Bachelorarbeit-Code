@@ -1,0 +1,1 @@
+/usr/bin/c++ -m32 "CMakeFiles/core_fast_semaphore_police_cpp-bin.dir/core-fast/semaphore-police.cpp.o" -o core_fast_semaphore_police_cpp-bin  ../librodos.a

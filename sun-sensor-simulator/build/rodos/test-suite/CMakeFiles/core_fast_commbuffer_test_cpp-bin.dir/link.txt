@@ -1,0 +1,1 @@
+/usr/bin/c++ -m32 "CMakeFiles/core_fast_commbuffer_test_cpp-bin.dir/core-fast/commbuffer-test.cpp.o" -o core_fast_commbuffer_test_cpp-bin  ../librodos.a

@@ -1,0 +1,1 @@
+/usr/bin/c++ -m32 CMakeFiles/time.dir/time.cpp.o -o time  ../../librodos.a
