@@ -1,3 +1,5 @@
 venv
 **/.venv/
 **/build/
+build
+sun-sensor-simulator/build/
