@@ -177,29 +177,77 @@ light_source.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/light_source.cpp.s
 .PHONY : light_source.cpp.s
 
-matlib.o: matlib.cpp.o
-.PHONY : matlib.o
+math/matlib.o: math/matlib.cpp.o
+.PHONY : math/matlib.o
 
 # target to build an object file
-matlib.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/matlib.cpp.o
-.PHONY : matlib.cpp.o
+math/matlib.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/math/matlib.cpp.o
+.PHONY : math/matlib.cpp.o
 
-matlib.i: matlib.cpp.i
-.PHONY : matlib.i
+math/matlib.i: math/matlib.cpp.i
+.PHONY : math/matlib.i
 
 # target to preprocess a source file
-matlib.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/matlib.cpp.i
-.PHONY : matlib.cpp.i
+math/matlib.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/math/matlib.cpp.i
+.PHONY : math/matlib.cpp.i
 
-matlib.s: matlib.cpp.s
-.PHONY : matlib.s
+math/matlib.s: math/matlib.cpp.s
+.PHONY : math/matlib.s
 
 # target to generate assembly for a file
-matlib.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/matlib.cpp.s
-.PHONY : matlib.cpp.s
+math/matlib.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/math/matlib.cpp.s
+.PHONY : math/matlib.cpp.s
+
+particle.o: particle.cpp.o
+.PHONY : particle.o
+
+# target to build an object file
+particle.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/particle.cpp.o
+.PHONY : particle.cpp.o
+
+particle.i: particle.cpp.i
+.PHONY : particle.i
+
+# target to preprocess a source file
+particle.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/particle.cpp.i
+.PHONY : particle.cpp.i
+
+particle.s: particle.cpp.s
+.PHONY : particle.s
+
+# target to generate assembly for a file
+particle.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/particle.cpp.s
+.PHONY : particle.cpp.s
+
+plane.o: plane.cpp.o
+.PHONY : plane.o
+
+# target to build an object file
+plane.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/plane.cpp.o
+.PHONY : plane.cpp.o
+
+plane.i: plane.cpp.i
+.PHONY : plane.i
+
+# target to preprocess a source file
+plane.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/plane.cpp.i
+.PHONY : plane.cpp.i
+
+plane.s: plane.cpp.s
+.PHONY : plane.s
+
+# target to generate assembly for a file
+plane.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/plane.cpp.s
+.PHONY : plane.cpp.s
 
 # Help Target
 help:
@@ -216,9 +264,15 @@ help:
 	@echo "... light_source.o"
 	@echo "... light_source.i"
 	@echo "... light_source.s"
-	@echo "... matlib.o"
-	@echo "... matlib.i"
-	@echo "... matlib.s"
+	@echo "... math/matlib.o"
+	@echo "... math/matlib.i"
+	@echo "... math/matlib.s"
+	@echo "... particle.o"
+	@echo "... particle.i"
+	@echo "... particle.s"
+	@echo "... plane.o"
+	@echo "... plane.i"
+	@echo "... plane.s"
 .PHONY : help
 
 
