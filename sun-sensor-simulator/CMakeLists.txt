@@ -1,7 +1,7 @@
 cmake_minimum_required(VERSION 3.5)
 
 project(sun-sensor-simulator CXX)
-
+add_compile_options(-Wall)
 set(MATH
     math/matlib.h
     math/matlib.cpp
