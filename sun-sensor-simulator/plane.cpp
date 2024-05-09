@@ -82,7 +82,7 @@ int8_t Plane::particle_colission(Particle *particle){
     // snell's law
     Vector_3D particle_direction_S = (this->dcm_BN.inverse() * particle->direction).normalize();
     double angle_of_incidence = this->normal_S * particle_direction_S;
-    double theat = asin(this->n1 / this->n2 * sin (angle_of_incidence));
+    double theat = asin(this->n * sin (angle_of_incidence));
 
     // rotation axis
     Vector_3D axis;
