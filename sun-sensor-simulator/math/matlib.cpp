@@ -59,6 +59,10 @@ double Vector_3D::calculate_angle(Vector_3D other) const{
 Matrix_3D Vector_3D::rmat_to(Vector_3D target) const{
     Vector_3D v1 = this->normalize();
     Vector_3D v2 = target.normalize();
+    if (v1 == v2) {
+        Matrix_3D ret;
+        return ret.I();
+    }
     Vector_3D vdiff = v2;
 
     double cos = v1 * v2;
@@ -152,6 +156,10 @@ Vector_3D Vector_3D::operator-(Vector_3D other) const{
     return result;
 }
 
+bool Vector_3D::operator==(Vector_3D other) const{
+    if (this->x == other.x && this->y == other.y && this->z == other.z) return true;
+    return false;
+}
 
 Matrix_3D::Matrix_3D(){
     for (int i = 0; i < 3; i++){

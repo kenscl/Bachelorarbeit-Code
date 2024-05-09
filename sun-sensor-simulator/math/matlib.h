@@ -26,6 +26,7 @@ class Vector_3D {
 
         Vector_3D operator*(double value) const;
         Vector_3D operator/(double value) const;
+        bool operator==(Vector_3D other) const;
 
         double operator*(Vector_3D other) const;
         Vector_3D operator+(Vector_3D other) const;
