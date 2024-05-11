@@ -2,8 +2,12 @@
 #include "math/matlib.h"
 #include <cstdio>
 #include <fstream>
+#include "sun_sensor.h"
+#include "math/matlib.h"
+#include "black_body.h"
+
 Sun_sensor::Sun_sensor(){}
-        Sun_sensor::Sun_sensor(Vector_3D position, Matrix_3D dcm_BN, std::vector<Plane> diodes, std::vector<Plane> slits_top, std::vector<Plane> slits_bottom){
+Sun_sensor::Sun_sensor(Vector_3D position, Matrix_3D dcm_BN, std::vector<Plane> diodes, std::vector<Plane> slits_top, std::vector<Plane> slits_bottom){
     this->position = position;
     this->dcm_BN = dcm_BN;
     this->diodes = diodes;
@@ -17,44 +21,55 @@ double linear_interpolation_rvw(std::vector<rvw_data> data, double value, int le
     for (int i = 0; i < len - 1; i++) {
         if (data.at(i).wavelength == value) return data.at(i).responsivity;
         if (data.at(i).wavelength <= value && data.at(i+1).wavelength > value){
-            printf("i %f %f, i+1 %f %f\n", data.at(i).wavelength, data.at(i).responsivity, data.at(i+1).wavelength, data.at(i+1).responsivity);
             return lerp(data.at(i).responsivity, data.at(i+1).responsivity, data.at(i).wavelength, data.at(i+1).wavelength, value);
         }
     }
     return data.at(len - 1).responsivity;
 }
-std::vector<double> Sun_sensor::simulate(light_source source){
+
+std::vector<double> Sun_sensor::simulate(light_source * source){
+
+    /*
+     * 1. Propagate the particles to the outside of the glass
+     * 2. Propagate the particles to the inside part of the glass
+     * 3. Calculate the current if a collision occurs 
+     */
+
     std::vector<double> currents;
-    std::vector<Particle> particles; //= source.generate_particles();
-    particles.push_back(Particle(Vector_3D(0,0,1), Vector_3D(0,0,-1), 600, 100));
+    std::vector<Particle> particles;
+    std::vector<Particle> to_remove;
     std::vector<Particle>::iterator it;
+    particles = source->generate_particles(1000);
+
     for (Plane slit : this->slits_top) {
-        for(it = particles.begin(); it != particles.end(); it++) {
+        it = particles.begin();
+        while(it != particles.end()) {
             int8_t ret;
             ret = slit.particle_colission(&*it);
             if (ret != 0) {
                 particles.erase(it);
-            }
+            } else ++it;
         }
     }
+
     for (Plane slit : this->slits_bottom) {
-        for(it = particles.begin(); it != particles.end(); it++) {
+        it = particles.begin();
+        while(it != particles.end()) {
             int8_t ret;
             ret = slit.particle_colission(&*it);
             if (ret != 0) {
                 particles.erase(it);
-            }
+            } else ++it;
         }
     }
-    
-    for (Plane diode: this->diodes) {
+
+    for (int i = 0; i < this->diodes.size(); i++) {
         double diode_current = 0;
         for(it = particles.begin(); it != particles.end(); it++) {
             int8_t ret;
-            ret = diode.particle_colission(&*it);
+            ret = this->diodes.at(i).particle_colission(&*it);
             if (ret == 0) {
                 double particle_responsivity = linear_interpolation_rvw(this->rvw, it->wavelength, this->rvw_len);
-                printf("res %f\n", particle_responsivity);
                 double current = particle_responsivity * it->power;
                 diode_current += current;
             }
@@ -88,18 +103,21 @@ void Sun_sensor::read_rvw(){
 
     this->rvw = data;
     this->rvw_len = len;
-
-    i = 0;
-    for (i; i < len; i++){
-        printf("rvw: %f %f\n", this->rvw[i].wavelength, this->rvw[i].responsivity);
-    }
 }
 
 int main(){
     Sun_sensor ss;
     ss.read_rvw("../ADPD2140");
     ss.diodes.push_back(Plane(Vector_3D(0,0,0), Vector_3D(0,0,1), 10, 10));
-    std::vector<double> currents = ss.simulate(light_source());
+    ss.slits_top.push_back(Plane(Vector_3D(0,0,0.1), Vector_3D(0,0,1), 10, 10));
+        
+    black_body bb;
+
+    bb.position = Vector_3D(0,0,100);
+    bb.particle_enegery = 1;
+    bb.glass_planes = ss.slits_top;
+    
+    std::vector<double> currents = ss.simulate(&bb);
     printf("current: %f \n", currents.front());
 }
 

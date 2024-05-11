@@ -99,8 +99,6 @@ int8_t Plane::particle_colission(Particle *particle){
 
     particle_direction_rot_G = this->dcm_BN * particle_direction_rot_S;
     particle->direction = particle_direction_rot_G;
-    particle_direction_S.print();
-    particle_direction_rot_S.print();
 
     return 0;
 

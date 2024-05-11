@@ -11,5 +11,6 @@ class Particle {
     public: 
         Particle();
         Particle(Vector_3D position, Vector_3D direction, double wavelength, double power);
+        void print();
 };
 # endif
