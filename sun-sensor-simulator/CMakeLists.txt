@@ -15,6 +15,8 @@ set(SOURCES
     plane.cpp
     black_body.h
     black_body.cpp
+    sun_sensor.h
+    sun_sensor.cpp
     )
 
 add_executable(${PROJECT_NAME} ${MATH} ${SOURCES})

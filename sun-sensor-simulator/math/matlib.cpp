@@ -1,5 +1,6 @@
 #include "matlib.h"
 #include <cstdio>
+#include <cstdlib>
 
 Vector_3D::Vector_3D() {
     this->x = 0;
@@ -270,4 +271,22 @@ Matrix_3D Matrix_3D::inverse() const{
         inv.r[2][2] = (this->r[0][0] * this->r[1][1] - this->r[0][1] * this->r[1][0]) / det;
 
         return inv;
+}
+
+double lerp(double lly, double lry, double llx, double lrx, double x) {
+    double distance = abs (lrx - llx);
+    if (distance == 0) {
+        return (lly + lry) / 2; 
+    }
+    double weight_left = lly * abs (lrx - x) / distance;
+    double weight_right = lry * abs (llx - x) / distance;
+    return weight_left + weight_right;
+}
+
+double linear_interpolation(double * x, double * y, double value, int len){
+    if (x[0] > value) return y[0];
+    for (int i = 0; i < len - 1; i++) {
+        if (x[i] <= value && x[i+1] >= value) return lerp(y[i], y[i+1], x[i], x[i + 1], value);
+    }
+    return y[len];
 }

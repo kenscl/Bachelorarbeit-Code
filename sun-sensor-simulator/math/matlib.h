@@ -51,5 +51,8 @@ class Matrix_3D {
         Matrix_3D operator+(const Matrix_3D& other) const;
         
 };
+
+double lerp(double lly, double lry, double llx, double lrx, double x);
+double linear_interpolation(double * x, double * y, double value, int len);
 #endif
 

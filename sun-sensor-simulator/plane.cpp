@@ -99,14 +99,16 @@ int8_t Plane::particle_colission(Particle *particle){
 
     particle_direction_rot_G = this->dcm_BN * particle_direction_rot_S;
     particle->direction = particle_direction_rot_G;
+    particle_direction_S.print();
+    particle_direction_rot_S.print();
 
     return 0;
 
 }
 
-int main(){
-    Plane plane = Plane(Vector_3D(1,0,0), Vector_3D(1,1,1), 10, 10);
-    Particle particle = Particle(Vector_3D(0,1,1), Vector_3D (0,0,-1), 0);
-    plane.particle_colission(&particle);
-}
+//int main(){
+//    Plane plane = Plane(Vector_3D(1,0,0), Vector_3D(1,1,1), 10, 10);
+//    Particle particle = Particle(Vector_3D(0,1,1), Vector_3D (0,0,-1), 0, 0);
+//    plane.particle_colission(&particle);
+//}
 

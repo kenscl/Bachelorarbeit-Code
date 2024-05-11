@@ -11,7 +11,7 @@ class light_source {
     public: 
         light_source();
         light_source(Vector_3D position);
-        virtual std::vector<Particle> generate_particles();
+        //virtual std::vector<Particle> generate_particles();
 };
 
 #endif
