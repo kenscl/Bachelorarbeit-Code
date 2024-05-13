@@ -7,7 +7,10 @@ class black_body : public light_source{
     public:
         std::vector<Plane> glass_planes;
         double particle_enegery;
+        double wavelength_max, wavelength_min;
     public:
+        black_body();
+        black_body(std::vector<Plane> glass_planes, double particle_energy, double wavelength_max, double wavelength_min);
         double Uv(double frequency, double Temperature_K);
         double generate_photon(double temperature, double max_wavelength, double min_wavelenth);
         /*

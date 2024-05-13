@@ -2,7 +2,6 @@ cmake_minimum_required(VERSION 3.5)
 
 project(sun-sensor-simulator CXX)
 add_compile_options(-Wall)
-add_compile_options(-g)
 set(MATH
     math/matlib.h
     math/matlib.cpp
@@ -18,6 +17,7 @@ set(SOURCES
     black_body.cpp
     sun_sensor.h
     sun_sensor.cpp
+    misc.h
     )
 
 add_executable(${PROJECT_NAME} ${MATH} ${SOURCES})

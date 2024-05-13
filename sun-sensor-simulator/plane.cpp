@@ -9,6 +9,7 @@ Plane::Plane(Vector_3D origin, Vector_3D normal_G, double size_x, double size_y)
     this->dcm_BN = this->normal_S.rmat_to(normal_G);
     this->size_x = size_x;
     this->size_y = size_y;
+    this->n = 0;
 }
 
 Plane::Plane(Vector_3D origin, Matrix_3D dcm_BN, double size_x, double size_y){
@@ -18,6 +19,7 @@ Plane::Plane(Vector_3D origin, Matrix_3D dcm_BN, double size_x, double size_y){
     this->normal_G = this->dcm_BN * this->normal_S;
     this->size_x = size_x;
     this->size_y = size_y;
+    this->n = 0;
 }
 
 Plane::Plane(Vector_3D origin, Matrix_3D dcm_BN, double size_x, double size_y, double n1, double n2){

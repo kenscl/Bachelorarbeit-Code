@@ -2,6 +2,19 @@
 #include <cmath>
 #include <random>
 
+black_body::black_body() {
+    this->wavelength_max = 1102;
+    this->wavelength_min = 359;
+    this->position = Vector_3D(0,0,0);
+    this->particle_enegery = 0;
+}
+black_body::black_body(std::vector<Plane> glass_planes, double particle_energy, double wavelength_max, double wavelength_min) {
+
+    this->wavelength_max = wavelength_max;
+    this->wavelength_min = wavelength_min;
+    this->particle_enegery = particle_energy;
+    this->glass_planes = glass_planes;
+}
 double black_body::Uv(double wavelength_nm, double temperature_K){
     double wavelength_m = wavelength_nm * 1e-9;
     double numerator = 2 * PLANCK_CONSTANT * pow(C, 2);
@@ -60,7 +73,7 @@ std::vector<Particle> black_body::generate_particles(int count) {
             particle_position = this->position + pos_G_prime;
 
             // generate wavelength for particle
-            double wavelength = this->generate_photon(5770, 300, 1300);
+            double wavelength = this->generate_photon(5770, this->wavelength_min, this->wavelength_max);
 
             Particle particle(particle_position, bb_to_plane, wavelength, this->particle_enegery);
 

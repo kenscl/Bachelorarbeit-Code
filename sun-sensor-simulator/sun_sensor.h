@@ -1,5 +1,6 @@
 #include "plane.h"
 #include "light_source.h"
+#include <cstdint>
 #include <vector>
 
 #ifndef __SUN_SENSOR 
@@ -24,7 +25,7 @@ class Sun_sensor {
         Sun_sensor();
         Sun_sensor(Vector_3D position, Matrix_3D dcm_BN, std::vector<Plane> diodes, std::vector<Plane> slits_top, std::vector<Plane> slits_bottom);
 
-        std::vector<double> simulate(light_source * source);
+        std::vector<double> simulate(light_source * source, uint64_t particle_count);
         void read_rvw(char * file);
         void read_rvw();
 };
