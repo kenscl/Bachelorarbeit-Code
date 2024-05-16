@@ -19,6 +19,7 @@ class Plane {
 
         Vector_3D calculate_point_of_contact(Particle particle);
         int8_t particle_colission(Particle *particle);
+        void get_directional_angles(Vector_3D direction, double *x, double *y);
         
 
 

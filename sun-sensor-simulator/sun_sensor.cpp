@@ -28,6 +28,7 @@ double linear_interpolation_rvw(std::vector<rvw_data> data, double value, int le
     return data.at(len - 1).responsivity;
 }
 
+
 std::vector<double> Sun_sensor::simulate(light_source * source, uint64_t particle_count){
 
     /*
@@ -41,7 +42,13 @@ std::vector<double> Sun_sensor::simulate(light_source * source, uint64_t particl
     std::vector<Particle> to_remove;
     std::vector<Particle>::iterator it;
     std::vector<Plane>::iterator it_diodes;
-    particles = source->generate_particles(particle_count);
+    double angle_x, angle_y;
+    Vector_3D sun_to_sensor;
+    sun_to_sensor =  source->position - this->slits_top.at(0).origin;
+    this->slits_top.at(0).get_directional_angles(sun_to_sensor, &angle_x, &angle_y);
+
+
+    particles = source->generate_particles(particle_count * cos(angle_x) * cos (angle_y));
 
     for (Plane slit : this->slits_top) {
         it = particles.begin();
@@ -72,15 +79,21 @@ std::vector<double> Sun_sensor::simulate(light_source * source, uint64_t particl
         double diode_current = 0;
         it = particles.begin();
         while(it != particles.end()) {
+            Vector_3D contact_point_G;
+            contact_point_G = this->diodes.at(i).calculate_point_of_contact(*it);
+            //printf("%f %f \n", contact_point_G.x, contact_point_G.y);
             int8_t ret;
             ret = this->diodes.at(i).particle_colission(&*it);
             if (ret == 0) {
-                count++;
                 double particle_responsivity = linear_interpolation_rvw(this->rvw, it->wavelength, this->rvw_len);
                 double current = particle_responsivity * it->power;
                 diode_current += current;
+                //printf("%f %f \n", it->position.x, it->position.y);
                 particles.erase(it);
-            } else ++it;
+            } else { 
+                ++it;
+                count++;
+            }
         }
         currents.push_back(diode_current);
     }
@@ -114,38 +127,80 @@ void Sun_sensor::read_rvw(){
     this->rvw_len = len;
 }
 
-int main(){
-    Sun_sensor ss;
-    ss.read_rvw("../ADPD2140");
-    ss.diodes.push_back(Plane(Vector_3D(5,0,0), Vector_3D(0,0,1), 5, 10));
-    ss.diodes.push_back(Plane(Vector_3D(-5,0,0), Vector_3D(0,0,1), 5, 10));
-    ss.slits_top.push_back(Plane(Vector_3D(0,0,0.5), Vector_3D(0,0,1), 10, 10));
-    ss.slits_top.at(0).n = 0.66;
-        
-    black_body bb;
-    bb.particle_enegery = 1;
-    bb.glass_planes = ss.slits_top;
-    bb.wavelength_max = 850;
-    bb.wavelength_min = 850;
-
-    double x = - 50;
-    double d = 5;
-
-    while (x <= 50){
-        bb.position = Vector_3D(x,0,d);
-
-        int64_t begin = NOW();
-        std::vector<double> currents = ss.simulate(&bb, 1000);
-        printf("%f %f \n",atan (x / d) * 57.2, currents.front() + currents.back());
-        int64_t end = NOW();
-        //printf("dt %f [ms] \n", (double) (end - begin) / MILLISECONDS);
-        x += 0.1;
-    }
-}
-
 
 ADPD2140::ADPD2140(Vector_3D position, Matrix_3D dcm_BN){
     this->position = position;
     this->dcm_BN = dcm_BN;
-    // todo
+    double to_mm = 1. / 1000; // to mm
+
+    // Diodes
+    // Define position in sensor frame and then shift to global frame
+    Vector_3D diode1_pos_G;
+    Vector_3D diode1_pos_B(- 0.5, 0.75, 0);
+    diode1_pos_B = diode1_pos_B * to_mm;
+    diode1_pos_G = position + dcm_BN * diode1_pos_B;
+
+    Vector_3D diode2_pos_G;
+    Vector_3D diode2_pos_B(0.5, 0.75, 0);
+    diode2_pos_B = diode2_pos_B * to_mm;
+    diode2_pos_G = position + dcm_BN * diode2_pos_B;
+
+    Vector_3D diode3_pos_G;
+    Vector_3D diode3_pos_B(-0.5, -0.75, 0);
+    diode3_pos_B = diode3_pos_B * to_mm;
+    diode3_pos_G = position + dcm_BN * diode3_pos_B;
+
+    Vector_3D diode4_pos_G;
+    Vector_3D diode4_pos_B(0.5, -0.75, 0);
+    diode4_pos_B = diode4_pos_B * to_mm;
+    diode4_pos_G = position + dcm_BN * diode4_pos_B;
+
+    Plane diode1(diode1_pos_G, dcm_BN, 0.5 * to_mm, 0.75 * to_mm); 
+    Plane diode2(diode2_pos_G, dcm_BN, 0.5 * to_mm, 0.75 * to_mm); 
+    Plane diode3(diode3_pos_G, dcm_BN, 0.5 * to_mm, 0.75 * to_mm); 
+    Plane diode4(diode4_pos_G, dcm_BN, 0.5 * to_mm, 0.75 * to_mm); 
+    this->diodes.push_back(diode1);
+    this->diodes.push_back(diode2);
+    this->diodes.push_back(diode3);
+    this->diodes.push_back(diode4);
+
+    //slit
+    double width = 1 * to_mm;
+    double hight = .01 * to_mm;
+    Vector_3D slit_B(0,0, 5 * to_mm);
+    Vector_3D slit_G;
+    slit_G = dcm_BN * slit_B + position;
+
+    this->slits_top.push_back(Plane(slit_G, dcm_BN, 2 * width, 1 * width, 0.));
+
+    this->read_rvw("../ADPD2140");
 }
+
+int main(){
+    Vector_3D position(0,0,0);
+    Matrix_3D dcm_BN;
+    dcm_BN = dcm_BN.I();
+
+    ADPD2140 adpd(position, dcm_BN);
+        
+    black_body bb;
+    bb.particle_enegery = 1;
+    bb.glass_planes = adpd.slits_top;
+    bb.wavelength_max = 850;
+    bb.wavelength_min = 850;
+
+    double x = - 10;
+    double d = 5;
+
+    while (x <= 10){
+        bb.position = Vector_3D(x,0,d);
+
+        int64_t begin = NOW();
+        std::vector<double> currents = adpd.simulate(&bb, 10);
+        printf("%f %f \n",atan (x / d) * 57.2, currents.at(0)+ currents.at(1) + currents.at(2) + currents.at(3));
+        int64_t end = NOW();
+        //printf("dt %f [ms] \n", (double) (end - begin) / MILLISECONDS);
+        x += 0.05;
+    }
+}
+

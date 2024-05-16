@@ -23,11 +23,21 @@ Plane::Plane(Vector_3D origin, Matrix_3D dcm_BN, double size_x, double size_y){
 }
 
 Plane::Plane(Vector_3D origin, Matrix_3D dcm_BN, double size_x, double size_y, double n1, double n2){
-    Plane(origin, dcm_BN, size_x, size_y);
+    this->origin = origin;
+    this->normal_S = Vector_3D(0,0,1);
+    this->dcm_BN = dcm_BN;
+    this->normal_G = this->dcm_BN * this->normal_S;
+    this->size_x = size_x;
+    this->size_y = size_y;
     this->n = n1 / n2;
 }
 Plane::Plane(Vector_3D origin, Matrix_3D dcm_BN, double size_x, double size_y, double n){
-    Plane(origin, dcm_BN, size_x, size_y);
+    this->origin = origin;
+    this->normal_S = Vector_3D(0,0,1);
+    this->dcm_BN = dcm_BN;
+    this->normal_G = this->dcm_BN * this->normal_S;
+    this->size_x = size_x;
+    this->size_y = size_y;
     this->n = n;
 }
 
@@ -112,3 +122,17 @@ int8_t Plane::particle_colission(Particle *particle){
 //    plane.particle_colission(&particle);
 //}
 
+void Plane::get_directional_angles(Vector_3D direction, double *x, double *y){
+    /*
+     * To get the angles we firts project to the local frame and then decompose to the x and y componennts
+     */
+
+    Vector_3D part_x, part_y, direction_B;
+    direction_B = this->dcm_BN * direction;
+    part_x.x = direction_B.x;
+    part_x.z = direction_B.z;
+    part_y.y = direction_B.y;
+    part_y.z = direction_B.z;
+    *x = this->normal_S.calculate_angle(part_x);
+    *y = this->normal_S.calculate_angle(part_y);
+}

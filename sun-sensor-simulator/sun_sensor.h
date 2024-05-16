@@ -30,7 +30,7 @@ class Sun_sensor {
         void read_rvw();
 };
 
-class ADPD2140 : Sun_sensor {
+class ADPD2140 : public Sun_sensor {
 
     public: 
         ADPD2140(Vector_3D position, Matrix_3D dcm_BN);
