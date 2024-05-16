@@ -185,7 +185,7 @@ int main(){
         
     black_body bb;
     bb.particle_enegery = 1;
-    bb.glass_planes = adpd.slits_top;
+    bb.glass_planes = adpd.diodes;
     bb.wavelength_max = 850;
     bb.wavelength_min = 850;
 
@@ -196,7 +196,7 @@ int main(){
         bb.position = Vector_3D(x,0,d);
 
         int64_t begin = NOW();
-        std::vector<double> currents = adpd.simulate(&bb, 10);
+        std::vector<double> currents = adpd.simulate(&bb, 50);
         printf("%f %f \n",atan (x / d) * 57.2, currents.at(0)+ currents.at(1) + currents.at(2) + currents.at(3));
         int64_t end = NOW();
         //printf("dt %f [ms] \n", (double) (end - begin) / MILLISECONDS);
