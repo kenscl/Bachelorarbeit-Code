@@ -6,3 +6,4 @@ light_source::light_source(){
 light_source::light_source(Vector_3D position){
     this->position = position;
 }
+

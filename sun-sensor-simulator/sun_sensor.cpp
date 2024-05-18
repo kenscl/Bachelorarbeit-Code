@@ -176,31 +176,3 @@ ADPD2140::ADPD2140(Vector_3D position, Matrix_3D dcm_BN){
     this->read_rvw("../ADPD2140");
 }
 
-int main(){
-    Vector_3D position(0,0,0);
-    Matrix_3D dcm_BN;
-    dcm_BN = dcm_BN.I();
-
-    ADPD2140 adpd(position, dcm_BN);
-        
-    black_body bb;
-    bb.particle_enegery = 1;
-    bb.glass_planes = adpd.diodes;
-    bb.wavelength_max = 850;
-    bb.wavelength_min = 850;
-
-    double x = - 10;
-    double d = 5;
-
-    while (x <= 10){
-        bb.position = Vector_3D(x,0,d);
-
-        int64_t begin = NOW();
-        std::vector<double> currents = adpd.simulate(&bb, 50);
-        printf("%f %f \n",atan (x / d) * 57.2, currents.at(0)+ currents.at(1) + currents.at(2) + currents.at(3));
-        int64_t end = NOW();
-        //printf("dt %f [ms] \n", (double) (end - begin) / MILLISECONDS);
-        x += 0.05;
-    }
-}
-

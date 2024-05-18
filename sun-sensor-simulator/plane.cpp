@@ -136,3 +136,24 @@ void Plane::get_directional_angles(Vector_3D direction, double *x, double *y){
     *x = this->normal_S.calculate_angle(part_x);
     *y = this->normal_S.calculate_angle(part_y);
 }
+void Plane::set_light_source_relative_postion_at_angle(light_source * source, double angle_x, double angle_y) {
+    /*
+     * 1. get distance to ls
+     * 2. Generate unit vector and multiply with distance
+     * 3. Transform to global frame
+     */
+    double distance;
+    Vector_3D unit;
+    Vector_3D position_G;
+
+    distance = (this->origin - source->position).norm();
+
+    unit.z = sqrt (1 / (tan(angle_x) * tan(angle_x) + tan(angle_y) * tan(angle_y) + 1) );
+    unit.x = unit.z * tan (angle_x);
+    unit.y = unit.z * tan (angle_y);
+
+    position_G = (this->dcm_BN * unit) * distance; 
+
+    source->position = position_G;
+
+}

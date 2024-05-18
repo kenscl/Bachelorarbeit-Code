@@ -334,6 +334,26 @@ CMAKE_TAPI-ADVANCED:INTERNAL=1
 CMAKE_UNAME:INTERNAL=/usr/bin/uname
 //ADVANCED property for variable: CMAKE_VERBOSE_MAKEFILE
 CMAKE_VERBOSE_MAKEFILE-ADVANCED:INTERNAL=1
+//Details about finding Python3
+FIND_PACKAGE_MESSAGE_DETAILS_Python3:INTERNAL=[/usr/include/python3.12][/usr/lib/libpython3.12.so][/usr/lib/python3.12/site-packages/numpy/core/include][cfound components: Development NumPy Interpreter Development.Module Development.Embed ][v3.12.3()]
 //linker supports push/pop state
 _CMAKE_LINKER_PUSHPOP_STATE_SUPPORTED:INTERNAL=TRUE
+//Compiler reason failure
+_Python3_Compiler_REASON_FAILURE:INTERNAL=
+_Python3_DEVELOPMENT_EMBED_SIGNATURE:INTERNAL=b52a81971c6dc1c58b0824fc0888bfb0
+_Python3_DEVELOPMENT_MODULE_SIGNATURE:INTERNAL=a80fdade31ace3e44fbb2c81da19bc52
+//Development reason failure
+_Python3_Development_REASON_FAILURE:INTERNAL=
+//Path to a program.
+_Python3_EXECUTABLE:INTERNAL=/usr/bin/python3.12
+//Path to a file.
+_Python3_INCLUDE_DIR:INTERNAL=/usr/include/python3.12
+//Python3 Properties
+_Python3_INTERPRETER_PROPERTIES:INTERNAL=Python;3;12;3;64;;cpython-312-x86_64-linux-gnu;abi3;/usr/lib/python3.12;/usr/lib/python3.12;/usr/lib/python3.12/site-packages;/usr/lib/python3.12/site-packages
+_Python3_INTERPRETER_SIGNATURE:INTERNAL=f811b8a062a8994e96ffe87747bf9bfe
+//Path to a library.
+_Python3_LIBRARY_RELEASE:INTERNAL=/usr/lib/libpython3.12.so
+_Python3_NUMPY_SIGNATURE:INTERNAL=0325a60479cc7e7a039407b29cae0e3a
+//Path to a file.
+_Python3_NumPy_INCLUDE_DIR:INTERNAL=/usr/lib/python3.12/site-packages/numpy/core/include
 

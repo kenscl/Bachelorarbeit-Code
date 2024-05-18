@@ -1,5 +1,6 @@
 # include "math/matlib.h"
 # include "particle.h"
+# include "light_source.h"
 #ifndef __PLANE
 #define __PLANE
 class Plane {
@@ -20,9 +21,7 @@ class Plane {
         Vector_3D calculate_point_of_contact(Particle particle);
         int8_t particle_colission(Particle *particle);
         void get_directional_angles(Vector_3D direction, double *x, double *y);
-        
 
-
-        
+        void set_light_source_relative_postion_at_angle(light_source * source, double angle_x, double angle_y);
 };
 #endif
