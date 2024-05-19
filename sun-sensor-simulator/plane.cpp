@@ -101,24 +101,26 @@ int8_t Plane::particle_colission(Particle *particle){
         while ((si > 1) | (si < -1)) {
             return 4;
         }
-        theta = asin(si);
+        double ss_angle = asin(si);
+        theta = angle_of_incidence - ss_angle; 
     } else theta = 0;
-
+    printf("angle: %f, aoi %f \n", theta * 57.2, angle_of_incidence * 57.2);
+    
     // rotation axis
     Vector_3D axis;
-    axis = this->normal_S.cross_product(particle_direction_S);
+    axis = this->normal_S.cross_product(particle_direction_S * -1) * -1;
 
     // rr formula
     Vector_3D particle_direction_rot_S;
     Vector_3D particle_direction_rot_G;
     Vector_3D k;
     k = axis.normalize();
-    particle_direction_rot_S = particle_direction_S * cos (theta) 
-        + k.cross_product(particle_direction_S) * sin(theta) 
-    + k * (k * particle_direction_S) * (1 - cos (theta));
+    particle_direction_rot_S = particle_direction_S * cos (theta) + k.cross_product(particle_direction_S) * sin(theta) + k * (k * particle_direction_S) * (1 - cos (theta));
+    particle_direction_rot_S.print();
 
     particle_direction_rot_G = this->dcm_BN * particle_direction_rot_S;
     particle->direction = particle_direction_rot_G;
+    printf("new angle: %f \n", (this->normal_S.calculate_angle(particle_direction_rot_S * -1)) * 57.2);
 
     return 0;
 
