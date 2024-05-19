@@ -9,7 +9,7 @@ Plane::Plane(Vector_3D origin, Vector_3D normal_G, double size_x, double size_y)
     this->dcm_BN = this->normal_S.rmat_to(normal_G);
     this->size_x = size_x;
     this->size_y = size_y;
-    this->n = 0;
+    this->n = 1;
 }
 
 Plane::Plane(Vector_3D origin, Matrix_3D dcm_BN, double size_x, double size_y){
@@ -19,7 +19,7 @@ Plane::Plane(Vector_3D origin, Matrix_3D dcm_BN, double size_x, double size_y){
     this->normal_G = this->dcm_BN * this->normal_S;
     this->size_x = size_x;
     this->size_y = size_y;
-    this->n = 0;
+    this->n = 1;
 }
 
 Plane::Plane(Vector_3D origin, Matrix_3D dcm_BN, double size_x, double size_y, double n1, double n2){
@@ -93,8 +93,16 @@ int8_t Plane::particle_colission(Particle *particle){
 
     // snell's law
     Vector_3D particle_direction_S = (this->dcm_BN.inverse() * particle->direction).normalize();
-    double angle_of_incidence = this->normal_S * particle_direction_S;
-    double theat = asin(this->n * sin (angle_of_incidence));
+    double angle_of_incidence = this->normal_S.calculate_angle(particle_direction_S * -1);
+    double theta;
+    if (this->n != 0) {
+        double si = sin (angle_of_incidence) / this->n;
+        // total reflection
+        while ((si > 1) | (si < -1)) {
+            return 4;
+        }
+        theta = asin(si);
+    } else theta = 0;
 
     // rotation axis
     Vector_3D axis;
@@ -105,9 +113,9 @@ int8_t Plane::particle_colission(Particle *particle){
     Vector_3D particle_direction_rot_G;
     Vector_3D k;
     k = axis.normalize();
-    particle_direction_rot_S = particle_direction_S * cos (theat) 
-        + k.cross_product(particle_direction_S) * sin(theat) 
-    + k * (k * particle_direction_S) * (1 - cos (theat));
+    particle_direction_rot_S = particle_direction_S * cos (theta) 
+        + k.cross_product(particle_direction_S) * sin(theta) 
+    + k * (k * particle_direction_S) * (1 - cos (theta));
 
     particle_direction_rot_G = this->dcm_BN * particle_direction_rot_S;
     particle->direction = particle_direction_rot_G;

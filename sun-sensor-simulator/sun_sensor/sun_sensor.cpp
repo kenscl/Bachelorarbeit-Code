@@ -98,7 +98,7 @@ std::vector<double> Sun_sensor::simulate(light_source * source, uint64_t particl
                 double particle_responsivity = linear_interpolation_rvw(this->rvw, it->wavelength, this->rvw_len);
                 double current = particle_responsivity * it->power;
                 diode_current += current;
-                printf("%f %f \n", it->position.x, it->position.y);
+                //printf("%f %f \n", it->position.x, it->position.y);
                 particles.erase(it);
             } else { 
                 ++it;

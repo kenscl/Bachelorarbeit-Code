@@ -55,13 +55,13 @@ ADPD2140::ADPD2140(Vector_3D position, Matrix_3D dcm_BN){
     this->diodes.push_back(diode4);
 
     //slit
-    double width = 1 * to_mm;
-    double hight = 1 * to_mm;
+    double width = 0.5 * to_mm;
+    double hight = 0.5 * to_mm;
     Vector_3D slit_B(0,0, hight);
     Vector_3D slit_G;
     slit_G = dcm_BN * slit_B + position;
 
-    this->slits_top.push_back(Plane(slit_G, dcm_BN, width, 1 * width, 0.));
+    this->slits_top.push_back(Plane(slit_G, dcm_BN, width, 1 * width, 0.66));
 
     this->read_rvw("../sun_sensor/ADPD2140_responsivity");
     this->read_radiant_sensitivity("../sun_sensor/ADPD2140_radiant_sensitivity");
