@@ -80,5 +80,6 @@ std::vector<Particle> black_body::generate_particles(int count) {
             particles.push_back(particle);
         } 
     }
+
     return particles;
 }

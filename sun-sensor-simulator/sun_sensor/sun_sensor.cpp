@@ -1,12 +1,12 @@
 #include "sun_sensor.h"
-#include "math/matlib.h"
+#include "../math/matlib.h"
 #include <cstdint>
 #include <cstdio>
 #include <fstream>
 #include "sun_sensor.h"
-#include "math/matlib.h"
-#include "black_body.h"
-#include "misc.h"
+#include "../math/matlib.h"
+#include "../black_body.h"
+#include "../misc.h"
 
 Sun_sensor::Sun_sensor(){}
 Sun_sensor::Sun_sensor(Vector_3D position, Matrix_3D dcm_BN, std::vector<Plane> diodes, std::vector<Plane> slits_top, std::vector<Plane> slits_bottom){
@@ -28,6 +28,16 @@ double linear_interpolation_rvw(std::vector<rvw_data> data, double value, int le
     return data.at(len - 1).responsivity;
 }
 
+double linear_interpolation_radiant_senitivity(std::vector<radiant_senitivity_data> data, double angle, int len){
+    if (data.at(0).angle> angle) return data.at(0).sensitivity;
+    for (int i = 0; i < len - 1; i++) {
+        if (data.at(i).angle == angle) return data.at(i).sensitivity;
+        if (data.at(i).angle <= angle && data.at(i+1).angle > angle){
+            return lerp(data.at(i).sensitivity, data.at(i+1).sensitivity, data.at(i).angle, data.at(i+1).angle, angle);
+        }
+    }
+    return data.at(len - 1).sensitivity;
+}
 
 std::vector<double> Sun_sensor::simulate(light_source * source, uint64_t particle_count){
 
@@ -48,7 +58,7 @@ std::vector<double> Sun_sensor::simulate(light_source * source, uint64_t particl
     this->slits_top.at(0).get_directional_angles(sun_to_sensor, &angle_x, &angle_y);
 
 
-    particles = source->generate_particles(particle_count * cos(angle_x) * cos (angle_y));
+    particles = source->generate_particles((int) particle_count * cos(angle_x) * cos (angle_y));
 
     for (Plane slit : this->slits_top) {
         it = particles.begin();
@@ -88,14 +98,16 @@ std::vector<double> Sun_sensor::simulate(light_source * source, uint64_t particl
                 double particle_responsivity = linear_interpolation_rvw(this->rvw, it->wavelength, this->rvw_len);
                 double current = particle_responsivity * it->power;
                 diode_current += current;
-                //printf("%f %f \n", it->position.x, it->position.y);
+                printf("%f %f \n", it->position.x, it->position.y);
                 particles.erase(it);
             } else { 
                 ++it;
                 count++;
             }
         }
-        currents.push_back(diode_current);
+        double angular_senitivity_x = linear_interpolation_radiant_senitivity(this->radiant_senitivity_x, angle_x, this->radiant_senitivity_len_x);
+        double angular_senitivity_y = linear_interpolation_radiant_senitivity(this->radiant_senitivity_y, angle_y, this->radiant_senitivity_len_y);
+        currents.push_back(diode_current * angular_senitivity_x * angular_senitivity_y);
     }
     //printf("nbr of particles that hit: %d \n", count);
     return currents;
@@ -127,52 +139,45 @@ void Sun_sensor::read_rvw(){
     this->rvw_len = len;
 }
 
+void Sun_sensor::read_radiant_sensitivity(char* file) {
+    this->radiant_senitivity_file = file;
+    this->read_radiant_sensitivity();
+}
+void Sun_sensor::read_radiant_sensitivity() {
+    
+    std::ifstream in;
+    std::string contents;
+    int len_x;
+    int len_y;
+    in.open(this->radiant_senitivity_file);
+    std::vector<radiant_senitivity_data> data_x;
+    std::vector<radiant_senitivity_data> data_y;
 
-ADPD2140::ADPD2140(Vector_3D position, Matrix_3D dcm_BN){
-    this->position = position;
-    this->dcm_BN = dcm_BN;
-    double to_mm = 1. / 1000; // to mm
+    getline(in, contents);
+    sscanf(contents.c_str(), "%d\n", &len_x);
 
-    // Diodes
-    // Define position in sensor frame and then shift to global frame
-    Vector_3D diode1_pos_G;
-    Vector_3D diode1_pos_B(- 0.5, 0.75, 0);
-    diode1_pos_B = diode1_pos_B * to_mm;
-    diode1_pos_G = position + dcm_BN * diode1_pos_B;
+    for (int i = 0; i < len_x; i++){
+        getline(in, contents);
+        radiant_senitivity_data new_data;
+        sscanf(contents.c_str(), "%lf %lf \n", &new_data.angle, &new_data.sensitivity);
+        new_data.angle = new_data.angle * M_PI / 180;
+        data_x.push_back(new_data);
+    };
 
-    Vector_3D diode2_pos_G;
-    Vector_3D diode2_pos_B(0.5, 0.75, 0);
-    diode2_pos_B = diode2_pos_B * to_mm;
-    diode2_pos_G = position + dcm_BN * diode2_pos_B;
+    getline(in, contents);
+    sscanf(contents.c_str(), "%d\n", &len_y);
+    printf("%s \n", contents.c_str());
+    for (int i = 0; i < len_y; i++){
+        getline(in, contents);
+        radiant_senitivity_data new_data;
+        sscanf(contents.c_str(), "%lf %lf \n", &new_data.angle, &new_data.sensitivity);
+        new_data.angle = new_data.angle * M_PI / 180;
+        data_y.push_back(new_data);
+    };
 
-    Vector_3D diode3_pos_G;
-    Vector_3D diode3_pos_B(-0.5, -0.75, 0);
-    diode3_pos_B = diode3_pos_B * to_mm;
-    diode3_pos_G = position + dcm_BN * diode3_pos_B;
-
-    Vector_3D diode4_pos_G;
-    Vector_3D diode4_pos_B(0.5, -0.75, 0);
-    diode4_pos_B = diode4_pos_B * to_mm;
-    diode4_pos_G = position + dcm_BN * diode4_pos_B;
-
-    Plane diode1(diode1_pos_G, dcm_BN, 0.5 * to_mm, 0.75 * to_mm); 
-    Plane diode2(diode2_pos_G, dcm_BN, 0.5 * to_mm, 0.75 * to_mm); 
-    Plane diode3(diode3_pos_G, dcm_BN, 0.5 * to_mm, 0.75 * to_mm); 
-    Plane diode4(diode4_pos_G, dcm_BN, 0.5 * to_mm, 0.75 * to_mm); 
-    this->diodes.push_back(diode1);
-    this->diodes.push_back(diode2);
-    this->diodes.push_back(diode3);
-    this->diodes.push_back(diode4);
-
-    //slit
-    double width = 1 * to_mm;
-    double hight = .01 * to_mm;
-    Vector_3D slit_B(0,0, 5 * to_mm);
-    Vector_3D slit_G;
-    slit_G = dcm_BN * slit_B + position;
-
-    this->slits_top.push_back(Plane(slit_G, dcm_BN, 2 * width, 1 * width, 0.));
-
-    this->read_rvw("../ADPD2140");
+    this->radiant_senitivity_x = data_x;
+    this->radiant_senitivity_y = data_y;
+    this->radiant_senitivity_len_x = len_x;
+    this->radiant_senitivity_len_y = len_y;
 }
 

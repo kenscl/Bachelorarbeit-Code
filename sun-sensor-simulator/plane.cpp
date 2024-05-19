@@ -116,11 +116,6 @@ int8_t Plane::particle_colission(Particle *particle){
 
 }
 
-//int main(){
-//    Plane plane = Plane(Vector_3D(1,0,0), Vector_3D(1,1,1), 10, 10);
-//    Particle particle = Particle(Vector_3D(0,1,1), Vector_3D (0,0,-1), 0, 0);
-//    plane.particle_colission(&particle);
-//}
 
 void Plane::get_directional_angles(Vector_3D direction, double *x, double *y){
     /*
@@ -136,6 +131,7 @@ void Plane::get_directional_angles(Vector_3D direction, double *x, double *y){
     *x = this->normal_S.calculate_angle(part_x);
     *y = this->normal_S.calculate_angle(part_y);
 }
+
 void Plane::set_light_source_relative_postion_at_angle(light_source * source, double angle_x, double angle_y) {
     /*
      * 1. get distance to ls

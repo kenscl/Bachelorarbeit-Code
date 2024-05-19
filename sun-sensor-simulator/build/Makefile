@@ -273,29 +273,53 @@ plane.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/plane.cpp.s
 .PHONY : plane.cpp.s
 
-sun_sensor.o: sun_sensor.cpp.o
-.PHONY : sun_sensor.o
+sun_sensor/ADPD2140.o: sun_sensor/ADPD2140.cpp.o
+.PHONY : sun_sensor/ADPD2140.o
 
 # target to build an object file
-sun_sensor.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/sun_sensor.cpp.o
-.PHONY : sun_sensor.cpp.o
+sun_sensor/ADPD2140.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/sun_sensor/ADPD2140.cpp.o
+.PHONY : sun_sensor/ADPD2140.cpp.o
 
-sun_sensor.i: sun_sensor.cpp.i
-.PHONY : sun_sensor.i
+sun_sensor/ADPD2140.i: sun_sensor/ADPD2140.cpp.i
+.PHONY : sun_sensor/ADPD2140.i
 
 # target to preprocess a source file
-sun_sensor.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/sun_sensor.cpp.i
-.PHONY : sun_sensor.cpp.i
+sun_sensor/ADPD2140.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/sun_sensor/ADPD2140.cpp.i
+.PHONY : sun_sensor/ADPD2140.cpp.i
 
-sun_sensor.s: sun_sensor.cpp.s
-.PHONY : sun_sensor.s
+sun_sensor/ADPD2140.s: sun_sensor/ADPD2140.cpp.s
+.PHONY : sun_sensor/ADPD2140.s
 
 # target to generate assembly for a file
-sun_sensor.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/sun_sensor.cpp.s
-.PHONY : sun_sensor.cpp.s
+sun_sensor/ADPD2140.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/sun_sensor/ADPD2140.cpp.s
+.PHONY : sun_sensor/ADPD2140.cpp.s
+
+sun_sensor/sun_sensor.o: sun_sensor/sun_sensor.cpp.o
+.PHONY : sun_sensor/sun_sensor.o
+
+# target to build an object file
+sun_sensor/sun_sensor.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/sun_sensor/sun_sensor.cpp.o
+.PHONY : sun_sensor/sun_sensor.cpp.o
+
+sun_sensor/sun_sensor.i: sun_sensor/sun_sensor.cpp.i
+.PHONY : sun_sensor/sun_sensor.i
+
+# target to preprocess a source file
+sun_sensor/sun_sensor.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/sun_sensor/sun_sensor.cpp.i
+.PHONY : sun_sensor/sun_sensor.cpp.i
+
+sun_sensor/sun_sensor.s: sun_sensor/sun_sensor.cpp.s
+.PHONY : sun_sensor/sun_sensor.s
+
+# target to generate assembly for a file
+sun_sensor/sun_sensor.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/sun_sensor/sun_sensor.cpp.s
+.PHONY : sun_sensor/sun_sensor.cpp.s
 
 # Help Target
 help:
@@ -324,9 +348,12 @@ help:
 	@echo "... plane.o"
 	@echo "... plane.i"
 	@echo "... plane.s"
-	@echo "... sun_sensor.o"
-	@echo "... sun_sensor.i"
-	@echo "... sun_sensor.s"
+	@echo "... sun_sensor/ADPD2140.o"
+	@echo "... sun_sensor/ADPD2140.i"
+	@echo "... sun_sensor/ADPD2140.s"
+	@echo "... sun_sensor/sun_sensor.o"
+	@echo "... sun_sensor/sun_sensor.i"
+	@echo "... sun_sensor/sun_sensor.s"
 .PHONY : help
 
 

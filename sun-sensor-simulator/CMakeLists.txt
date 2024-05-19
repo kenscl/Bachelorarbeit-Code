@@ -16,6 +16,13 @@ set(MATH
     math/matlib.cpp
 )
 
+set(SENSOR
+    sun_sensor/sun_sensor.h
+    sun_sensor/sun_sensor.cpp
+    sun_sensor/ADPD2140.h
+    sun_sensor/ADPD2140.cpp
+    )
+
 set(SOURCES 
     particle.h
     particle.cpp
@@ -25,13 +32,11 @@ set(SOURCES
     plane.cpp
     black_body.h
     black_body.cpp
-    sun_sensor.h
-    sun_sensor.cpp
     misc.h
     main.cpp
 )
 
-add_executable(${PROJECT_NAME} ${MATH} ${SOURCES})
+add_executable(${PROJECT_NAME} ${MATH} ${SOURCES} ${SENSOR})
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${MATPLOTLIB_CPP_DIR})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${Python3_LIBRARIES})
