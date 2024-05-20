@@ -166,7 +166,6 @@ void Sun_sensor::read_radiant_sensitivity() {
 
     getline(in, contents);
     sscanf(contents.c_str(), "%d\n", &len_y);
-    printf("%s \n", contents.c_str());
     for (int i = 0; i < len_y; i++){
         getline(in, contents);
         radiant_senitivity_data new_data;

@@ -23,6 +23,7 @@ class Vector_3D {
         void print() const;
         double calculate_angle(Vector_3D other) const;
         Matrix_3D rmat_to(Vector_3D target) const;
+        double distance_to(Vector_3D other) const;
 
         Vector_3D operator*(double value) const;
         Vector_3D operator/(double value) const;

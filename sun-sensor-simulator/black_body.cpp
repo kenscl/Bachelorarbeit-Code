@@ -54,14 +54,25 @@ std::vector<Particle> black_body::generate_particles(int count) {
         std::mt19937 gen(rd());
         std::uniform_real_distribution<> dis_x(-it->size_x, it->size_x);
         std::uniform_real_distribution<> dis_y(-it->size_y, it->size_y);
+        std::vector<Vector_3D> generated;
+
         for (int i = 0; i < count; i++) {
+            Vector_3D pos_S;
             // Generate particle on plane and transform to global frame
-            double pos_x = dis_x(gen);
-            double pos_y = dis_y(gen);
-            
+            bool pass = false;
+            while (pass == false) {
+                double pos_x = dis_x(gen);
+                double pos_y = dis_y(gen);
+                pos_S = Vector_3D(pos_x, pos_y, 0);
+                pass = true;
+                for (int j = 0; j < generated.size(); j++){
+                    if (generated[j].distance_to(pos_S) < (it->size_x + it->size_y) / (16 * count)) pass = false;
+                }
+            }
+            generated.push_back(pos_S);
+
             Vector_3D pos_G_prime;
             Vector_3D pos_G;
-            Vector_3D pos_S(pos_x, pos_y, 0);
             pos_G_prime = it->dcm_BN * pos_S;
             pos_G = pos_G_prime + it->origin; // this is not needed
 
@@ -76,6 +87,7 @@ std::vector<Particle> black_body::generate_particles(int count) {
             double wavelength = this->generate_photon(5770, this->wavelength_min, this->wavelength_max);
 
             Particle particle(particle_position, bb_to_plane, wavelength, this->particle_enegery);
+            printf("%f %f \n", pos_S.x, pos_S.y);
 
             particles.push_back(particle);
         } 

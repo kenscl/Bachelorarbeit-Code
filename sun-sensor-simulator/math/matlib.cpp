@@ -113,6 +113,12 @@ Matrix_3D Vector_3D::rmat_to(Vector_3D target) const{
 
 }
 
+double Vector_3D::distance_to(Vector_3D other) const {
+    Vector_3D res;
+    res = *this - other;
+    return res.norm();
+}
+
 void Vector_3D::print() const{
     printf("Vector: \n");
     printf("x: %.5f \n", this->x);

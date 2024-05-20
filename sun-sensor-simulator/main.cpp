@@ -33,7 +33,7 @@ int main(){
         st.push_back((currents.at(0)+ currents.at(1) + currents.at(2) +currents.at(3)) / 400);
         x += 0.5;
     }
-    plt::scatter(x_v, y_v);
+    plt::plot(x_v, y_v);
     plt::scatter(x_v, st);
     plt::xlabel("INCIDENT LIGHT ANGLE (Degrees)");
     plt::ylabel("ANGULAR RESPONSE (Ratio)");
