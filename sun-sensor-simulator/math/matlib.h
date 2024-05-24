@@ -1,6 +1,7 @@
 #ifndef __MATLIB
 #define __MATLIB
 # include "math.h"
+#include <vector>
 # define PI                 3.14159265359
 # define C                  299792458.0
 # define PLANCK_CONSTANT    6.62607015e-34
@@ -8,6 +9,8 @@
 
 class Vector_3D;
 class Matrix_3D;
+template <typename T>
+class Vector;
 class Vector_3D {
     public: 
         double x,y,z;
@@ -33,6 +36,7 @@ class Vector_3D {
         Vector_3D operator+(Vector_3D other) const;
         Vector_3D operator-(Vector_3D other) const;
 };
+
 class Matrix_3D {
     public: 
         double r[3][3];
@@ -50,10 +54,53 @@ class Matrix_3D {
         Matrix_3D operator*(const Matrix_3D& other) const;
         Matrix_3D operator*(const double scalar) const;
         Matrix_3D operator+(const Matrix_3D& other) const;
+};
+
+template <typename T>
+class Matrix {
+public:
+    std::vector<std::vector<T>> data;
+    int rows;
+    int cols;
+
+public:
+    Matrix(int n, int m);
+
+    static Matrix<T> Identity(int size);
+    std::vector<T> operator*(const std::vector<T>& vec) const;
+    Vector<T> operator*(const Vector<T>& vec) const;
+    Matrix<T>& operator=(const Matrix<T>& other);
+    Matrix<T> operator*(const Matrix<T>& other) const;
+    Matrix<T> operator*(const T scalar) const;
+    Matrix<T> operator+(const Matrix<T>& other) const;
+
+    void print() const;
+
+    Matrix<T> submatrix(int excludeRow, int excludeCol) const;
+    T determinant() const;
+    Matrix<T> adjugate() const;
+    Matrix<T> inverse() const;
+    Matrix<T> transpose() const;
+};
+
+template <typename T>
+class Vector {
+    public:
+        std::vector<T> data;
+        int size;
+    public:
+        Vector(std::vector<T> data);
+        Vector(Vector_3D data);
+        Vector(int size);
+
+        int get_size() const;
         
 };
 
 double lerp(double lly, double lry, double llx, double lrx, double x);
 double linear_interpolation(double * x, double * y, double value, int len);
+
+template class Matrix<double>;
+template class Vector<double>;
 #endif
 

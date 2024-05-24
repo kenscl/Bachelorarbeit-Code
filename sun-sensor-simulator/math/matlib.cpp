@@ -278,6 +278,204 @@ Matrix_3D Matrix_3D::inverse() const{
 
         return inv;
 }
+template <typename T>
+Matrix<T>::Matrix(int n, int m) : rows(n), cols(m), data(n, std::vector<T>(m, 0)) {}
+
+template <typename T>
+Matrix<T> Matrix<T>::Identity(int size) {
+    Matrix<T> ret(size, size);
+    for (int i = 0; i < size; ++i) {
+        ret.data[i][i] = 1;
+    }
+    return ret;
+}
+
+template <typename T>
+std::vector<T> Matrix<T>::operator*(const std::vector<T>& vec) const {
+    if (vec.size() != cols) {
+        printf("Vector size must match the number of matrix columns \n");
+    }
+    std::vector<T> result(rows, 0);
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            result[i] += data[i][j] * vec[j];
+        }
+    }
+    return result;
+}
+
+template <typename T>
+Vector<T> Matrix<T>::operator*(const Vector<T>& vec) const {
+    if (vec.get_size() != cols) {
+        printf("Vector size must match the number of matrix columns \n");
+    }
+    Vector<T> result(cols);
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            result.data[i] += data[i][j] * vec.data[j];
+        }
+    }
+    return result;
+}
+
+template <typename T>
+Matrix<T>& Matrix<T>::operator=(const Matrix<T>& other) {
+    if (this != &other) {
+        rows = other.rows;
+        cols = other.cols;
+        data = other.data;
+    }
+    return *this;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::operator*(const Matrix<T>& other) const {
+    if (cols != other.rows) {
+        printf("Matrix dimensions must agree for multiplication\n");
+    }
+    Matrix<T> result(rows, other.cols);
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < other.cols; ++j) {
+            for (int k = 0; k < cols; ++k) {
+                result.data[i][j] += data[i][k] * other.data[k][j];
+            }
+        }
+    }
+    return result;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::operator*(const T scalar) const {
+    Matrix<T> result(rows, cols);
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            result.data[i][j] = data[i][j] * scalar;
+        }
+    }
+    return result;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::operator+(const Matrix<T>& other) const {
+    if (rows != other.rows || cols != other.cols) {
+        printf("Matrix dimensions must agree for addition\n");
+    }
+    Matrix<T> result(rows, cols);
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            result.data[i][j] = data[i][j] + other.data[i][j];
+        }
+    }
+    return result;
+}
+
+template <typename T>
+void Matrix<T>::print() const {
+    for (const auto& row : data) {
+        for (const auto& elem : row) {
+            printf("%f ", elem) ;
+        }
+        printf("\n");
+    }
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::submatrix(int excludeRow, int excludeCol) const {
+    Matrix<T> sub(rows - 1, cols - 1);
+    int subi = 0;
+    for (int i = 0; i < rows; ++i) {
+        if (i == excludeRow) continue;
+        int subj = 0;
+        for (int j = 0; j < cols; ++j) {
+            if (j == excludeCol) continue;
+            sub.data[subi][subj] = data[i][j];
+            ++subj;
+        }
+        ++subi;
+    }
+    return sub;
+}
+
+template <typename T>
+T Matrix<T>::determinant() const {
+    if (rows != cols) {
+        printf("Determinant can only be calculated for square matrices \n");
+    }
+    if (rows == 1) {
+        return data[0][0];
+    }
+    if (rows == 2) {
+        return data[0][0] * data[1][1] - data[0][1] * data[1][0];
+    }
+    T det = 0;
+    for (int j = 0; j < cols; ++j) {
+        det += (j % 2 == 0 ? 1 : -1) * data[0][j] * submatrix(0, j).determinant();
+    }
+    return det;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::adjugate() const {
+    if (rows != cols) {
+        printf("Adjugate can only be calculated for square matrices \n");
+    }
+    Matrix<T> adj(rows, cols);
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            adj.data[j][i] = ((i + j) % 2 == 0 ? 1 : -1) * submatrix(i, j).determinant();
+        }
+    }
+    return adj;
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::inverse() const {
+    if (rows != cols) {
+        printf("Inverse can only be calculated for square matrices");
+    }
+    T det = determinant();
+    if (det == 0) {
+        printf("Matrix is singular and cannot be inverted.");
+    }
+    Matrix<T> adj = adjugate();
+    return adj * (1 / det);
+}
+
+template <typename T>
+Matrix<T> Matrix<T>::transpose() const {
+    Matrix<T> result(cols, rows);
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            result.data[j][i] = data[i][j];
+        }
+    }
+    return result;
+}
+
+template <typename T>
+Vector<T>::Vector(std::vector<T> data) {
+    this->data = data;
+    this->size = data.size();
+}
+template <typename T>
+Vector<T>::Vector(Vector_3D data) {
+    this->data = std::vector<T>();
+    this->data.push_back(data.x);
+    this->data.push_back(data.y);
+    this->data.push_back(data.z);
+    this->size = 3;
+}
+
+template <typename T>
+Vector<T>::Vector(int size) {
+   this->data = std::vector<T>(size, 0);
+   this->size = size;
+}
+
+template <typename T>
+int Vector<T>::get_size() const{
+    return size;
+}
 
 double lerp(double lly, double lry, double llx, double lrx, double x) {
     double distance = abs (lrx - llx);

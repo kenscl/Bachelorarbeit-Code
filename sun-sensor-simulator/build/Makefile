@@ -129,54 +129,6 @@ sun-sensor-simulator/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/build
 .PHONY : sun-sensor-simulator/fast
 
-black_body.o: black_body.cpp.o
-.PHONY : black_body.o
-
-# target to build an object file
-black_body.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/black_body.cpp.o
-.PHONY : black_body.cpp.o
-
-black_body.i: black_body.cpp.i
-.PHONY : black_body.i
-
-# target to preprocess a source file
-black_body.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/black_body.cpp.i
-.PHONY : black_body.cpp.i
-
-black_body.s: black_body.cpp.s
-.PHONY : black_body.s
-
-# target to generate assembly for a file
-black_body.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/black_body.cpp.s
-.PHONY : black_body.cpp.s
-
-light_source.o: light_source.cpp.o
-.PHONY : light_source.o
-
-# target to build an object file
-light_source.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/light_source.cpp.o
-.PHONY : light_source.cpp.o
-
-light_source.i: light_source.cpp.i
-.PHONY : light_source.i
-
-# target to preprocess a source file
-light_source.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/light_source.cpp.i
-.PHONY : light_source.cpp.i
-
-light_source.s: light_source.cpp.s
-.PHONY : light_source.s
-
-# target to generate assembly for a file
-light_source.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/light_source.cpp.s
-.PHONY : light_source.cpp.s
-
 main.o: main.cpp.o
 .PHONY : main.o
 
@@ -225,101 +177,53 @@ math/matlib.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/math/matlib.cpp.s
 .PHONY : math/matlib.cpp.s
 
-particle.o: particle.cpp.o
-.PHONY : particle.o
+polynomial_fit/polynomial_fit.o: polynomial_fit/polynomial_fit.cpp.o
+.PHONY : polynomial_fit/polynomial_fit.o
 
 # target to build an object file
-particle.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/particle.cpp.o
-.PHONY : particle.cpp.o
+polynomial_fit/polynomial_fit.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/polynomial_fit/polynomial_fit.cpp.o
+.PHONY : polynomial_fit/polynomial_fit.cpp.o
 
-particle.i: particle.cpp.i
-.PHONY : particle.i
+polynomial_fit/polynomial_fit.i: polynomial_fit/polynomial_fit.cpp.i
+.PHONY : polynomial_fit/polynomial_fit.i
 
 # target to preprocess a source file
-particle.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/particle.cpp.i
-.PHONY : particle.cpp.i
+polynomial_fit/polynomial_fit.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/polynomial_fit/polynomial_fit.cpp.i
+.PHONY : polynomial_fit/polynomial_fit.cpp.i
 
-particle.s: particle.cpp.s
-.PHONY : particle.s
+polynomial_fit/polynomial_fit.s: polynomial_fit/polynomial_fit.cpp.s
+.PHONY : polynomial_fit/polynomial_fit.s
 
 # target to generate assembly for a file
-particle.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/particle.cpp.s
-.PHONY : particle.cpp.s
+polynomial_fit/polynomial_fit.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/polynomial_fit/polynomial_fit.cpp.s
+.PHONY : polynomial_fit/polynomial_fit.cpp.s
 
-plane.o: plane.cpp.o
-.PHONY : plane.o
+sun_sensor.o: sun_sensor.cpp.o
+.PHONY : sun_sensor.o
 
 # target to build an object file
-plane.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/plane.cpp.o
-.PHONY : plane.cpp.o
+sun_sensor.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/sun_sensor.cpp.o
+.PHONY : sun_sensor.cpp.o
 
-plane.i: plane.cpp.i
-.PHONY : plane.i
-
-# target to preprocess a source file
-plane.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/plane.cpp.i
-.PHONY : plane.cpp.i
-
-plane.s: plane.cpp.s
-.PHONY : plane.s
-
-# target to generate assembly for a file
-plane.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/plane.cpp.s
-.PHONY : plane.cpp.s
-
-sun_sensor/ADPD2140.o: sun_sensor/ADPD2140.cpp.o
-.PHONY : sun_sensor/ADPD2140.o
-
-# target to build an object file
-sun_sensor/ADPD2140.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/sun_sensor/ADPD2140.cpp.o
-.PHONY : sun_sensor/ADPD2140.cpp.o
-
-sun_sensor/ADPD2140.i: sun_sensor/ADPD2140.cpp.i
-.PHONY : sun_sensor/ADPD2140.i
+sun_sensor.i: sun_sensor.cpp.i
+.PHONY : sun_sensor.i
 
 # target to preprocess a source file
-sun_sensor/ADPD2140.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/sun_sensor/ADPD2140.cpp.i
-.PHONY : sun_sensor/ADPD2140.cpp.i
+sun_sensor.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/sun_sensor.cpp.i
+.PHONY : sun_sensor.cpp.i
 
-sun_sensor/ADPD2140.s: sun_sensor/ADPD2140.cpp.s
-.PHONY : sun_sensor/ADPD2140.s
-
-# target to generate assembly for a file
-sun_sensor/ADPD2140.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/sun_sensor/ADPD2140.cpp.s
-.PHONY : sun_sensor/ADPD2140.cpp.s
-
-sun_sensor/sun_sensor.o: sun_sensor/sun_sensor.cpp.o
-.PHONY : sun_sensor/sun_sensor.o
-
-# target to build an object file
-sun_sensor/sun_sensor.cpp.o:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/sun_sensor/sun_sensor.cpp.o
-.PHONY : sun_sensor/sun_sensor.cpp.o
-
-sun_sensor/sun_sensor.i: sun_sensor/sun_sensor.cpp.i
-.PHONY : sun_sensor/sun_sensor.i
-
-# target to preprocess a source file
-sun_sensor/sun_sensor.cpp.i:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/sun_sensor/sun_sensor.cpp.i
-.PHONY : sun_sensor/sun_sensor.cpp.i
-
-sun_sensor/sun_sensor.s: sun_sensor/sun_sensor.cpp.s
-.PHONY : sun_sensor/sun_sensor.s
+sun_sensor.s: sun_sensor.cpp.s
+.PHONY : sun_sensor.s
 
 # target to generate assembly for a file
-sun_sensor/sun_sensor.cpp.s:
-	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/sun_sensor/sun_sensor.cpp.s
-.PHONY : sun_sensor/sun_sensor.cpp.s
+sun_sensor.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/sun_sensor.cpp.s
+.PHONY : sun_sensor.cpp.s
 
 # Help Target
 help:
@@ -330,30 +234,18 @@ help:
 	@echo "... edit_cache"
 	@echo "... rebuild_cache"
 	@echo "... sun-sensor-simulator"
-	@echo "... black_body.o"
-	@echo "... black_body.i"
-	@echo "... black_body.s"
-	@echo "... light_source.o"
-	@echo "... light_source.i"
-	@echo "... light_source.s"
 	@echo "... main.o"
 	@echo "... main.i"
 	@echo "... main.s"
 	@echo "... math/matlib.o"
 	@echo "... math/matlib.i"
 	@echo "... math/matlib.s"
-	@echo "... particle.o"
-	@echo "... particle.i"
-	@echo "... particle.s"
-	@echo "... plane.o"
-	@echo "... plane.i"
-	@echo "... plane.s"
-	@echo "... sun_sensor/ADPD2140.o"
-	@echo "... sun_sensor/ADPD2140.i"
-	@echo "... sun_sensor/ADPD2140.s"
-	@echo "... sun_sensor/sun_sensor.o"
-	@echo "... sun_sensor/sun_sensor.i"
-	@echo "... sun_sensor/sun_sensor.s"
+	@echo "... polynomial_fit/polynomial_fit.o"
+	@echo "... polynomial_fit/polynomial_fit.i"
+	@echo "... polynomial_fit/polynomial_fit.s"
+	@echo "... sun_sensor.o"
+	@echo "... sun_sensor.i"
+	@echo "... sun_sensor.s"
 .PHONY : help
 
 

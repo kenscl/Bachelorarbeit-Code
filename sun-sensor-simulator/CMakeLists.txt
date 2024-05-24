@@ -16,27 +16,18 @@ set(MATH
     math/matlib.cpp
 )
 
-set(SENSOR
-    sun_sensor/sun_sensor.h
-    sun_sensor/sun_sensor.cpp
-    sun_sensor/ADPD2140.h
-    sun_sensor/ADPD2140.cpp
-    )
+set(POLFIT
+    polynomial_fit/polynomial_fit.h
+    polynomial_fit/polynomial_fit.cpp
+)
 
 set(SOURCES 
-    particle.h
-    particle.cpp
-    light_source.h
-    light_source.cpp
-    plane.h
-    plane.cpp
-    black_body.h
-    black_body.cpp
-    misc.h
+    sun_sensor.h
+    sun_sensor.cpp
     main.cpp
 )
 
-add_executable(${PROJECT_NAME} ${MATH} ${SOURCES} ${SENSOR})
+add_executable(${PROJECT_NAME} ${MATH} ${SOURCES} ${POLFIT})
 
 target_include_directories(${PROJECT_NAME} PRIVATE ${MATPLOTLIB_CPP_DIR})
 target_link_libraries(${PROJECT_NAME} PRIVATE ${Python3_LIBRARIES})

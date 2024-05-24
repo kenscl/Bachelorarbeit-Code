@@ -3,6 +3,15 @@ import numpy as np
 import matplotlib.pyplot as plt
 
 
+def read_data(file) -> list:
+    data = list()
+    noise = list()
+
+    f = open (file, "r")
+    for x in f:
+        data.append(float(x.split(" ")[0]))
+        noise.append(float(x.split(" ")[1]))
+    return data, noise
 #
 # Value Generator
 #
@@ -81,10 +90,6 @@ def linear_interpolation(x: float, noise: list, correction_data: list, gt_data):
     corrected_value = x + val_right + val_left
     return corrected_value
 
-#
-# B-Spline Interpolation
-#
-def b_spline_interpolation(data: list, noise: list) -> list:
 
 #
 # Test Code
@@ -92,7 +97,8 @@ def b_spline_interpolation(data: list, noise: list) -> list:
 
 
 order = 7
-data_pre, noise_pre = generate_data_array_with_errors(55, -55, 11000, 0.1)
+data_pre, noise_pre = read_data("../sun-sensor-simulator/build/res.txt")
+#data_pre, noise_pre = generate_data_array_with_errors(55, -55, 11000, 0.1)
 data = data_pre[::2]
 data_test_values = data_pre[1::2]
 noise = noise_pre[::2]
@@ -101,21 +107,23 @@ noise_test_values = noise_pre[1::2]
 weights = polynomial_regression(order, data, noise)
 polynomial = np.poly1d(weights)
 
+#
 correction_data = generate_correcton_data_linear_interpolation(data, noise)
+#
+#
 
-
-x_values = np.linspace(-55, 55, 1000)
+x_values = np.linspace(-60, 60, 1000)
 y_pol = polynomial(x_values)
 y_values = polynomial(noise)
-
+#
 print("error of polynomial regression: ", rmse(data, y_values))
-
+#
 linear_corrected = list()
 for i in range(len(noise_test_values)):
     linear_corrected.append(linear_interpolation(noise_test_values[i], noise, correction_data, data_test_values[i]))
-
+#
 print("error of linear interpolation: ", rmse(data, linear_corrected))
-
+#
 plt.plot(data, y_values, label='corrected data')
 plt.plot(x_values, y_pol, label='polynomial')
 plt.plot(x_values, x_values, label='ideal data')
