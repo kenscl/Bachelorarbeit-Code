@@ -1,7 +1,11 @@
 #ifndef __MATLIB
 #define __MATLIB
-# include "math.h"
+#include "math.h"
 #include <vector>
+
+// Math includes:
+#include "matrix.h"
+// constants
 # define PI                 3.14159265359
 # define C                  299792458.0
 # define PLANCK_CONSTANT    6.62607015e-34
@@ -11,6 +15,7 @@ class Vector_3D;
 class Matrix_3D;
 template <typename T>
 class Vector;
+
 class Vector_3D {
     public: 
         double x,y,z;
@@ -37,52 +42,6 @@ class Vector_3D {
         Vector_3D operator-(Vector_3D other) const;
 };
 
-class Matrix_3D {
-    public: 
-        double r[3][3];
-
-    public: 
-        Matrix_3D();
-
-        Matrix_3D inverse() const;
-        double determinant() const;
-        Matrix_3D I() const;
-        void print() const;
-
-        Vector_3D operator*(Vector_3D v) const;
-        Matrix_3D& operator=(const Matrix_3D& other);
-        Matrix_3D operator*(const Matrix_3D& other) const;
-        Matrix_3D operator*(const double scalar) const;
-        Matrix_3D operator+(const Matrix_3D& other) const;
-};
-
-template <typename T>
-class Matrix {
-public:
-    std::vector<std::vector<T>> data;
-    int rows;
-    int cols;
-
-public:
-    Matrix(int n, int m);
-
-    static Matrix<T> Identity(int size);
-    std::vector<T> operator*(const std::vector<T>& vec) const;
-    Vector<T> operator*(const Vector<T>& vec) const;
-    Matrix<T>& operator=(const Matrix<T>& other);
-    Matrix<T> operator*(const Matrix<T>& other) const;
-    Matrix<T> operator*(const T scalar) const;
-    Matrix<T> operator+(const Matrix<T>& other) const;
-
-    void print() const;
-
-    Matrix<T> submatrix(int excludeRow, int excludeCol) const;
-    T determinant() const;
-    Matrix<T> adjugate() const;
-    Matrix<T> inverse() const;
-    Matrix<T> transpose() const;
-};
-
 template <typename T>
 class Vector {
     public:
@@ -92,15 +51,23 @@ class Vector {
         Vector(std::vector<T> data);
         Vector(Vector_3D data);
         Vector(int size);
+        Vector() : size(0) {}
 
         int get_size() const;
+        void print() const;
+        T norm() const;
+        Vector<T> normalize() const;
         
+        Vector<T> operator*(double d) const;
+        T operator*(Vector<T> other) const;
+        Vector<T> operator/(double d) const;
+        Vector<T> operator-(const Vector<T> other) const;
+        Vector<T>& operator=(const Vector<T>& other);
 };
 
 double lerp(double lly, double lry, double llx, double lrx, double x);
 double linear_interpolation(double * x, double * y, double value, int len);
 
-template class Matrix<double>;
 template class Vector<double>;
 #endif
 

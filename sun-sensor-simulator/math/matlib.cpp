@@ -1,6 +1,5 @@
 #include "matlib.h"
 #include <cstdio>
-#include <cstdlib>
 
 Vector_3D::Vector_3D() {
     this->x = 0;
@@ -168,290 +167,6 @@ bool Vector_3D::operator==(Vector_3D other) const{
     return false;
 }
 
-Matrix_3D::Matrix_3D(){
-    for (int i = 0; i < 3; i++){
-        for (int j = 0; j < 3; j++){
-            this->r[i][j] = 0;
-        }
-    }
-}
-
-
-Matrix_3D Matrix_3D::I() const{
-    Matrix_3D ret;
-    ret.r[0][0] = 1;
-    ret.r[0][1] = 0;
-    ret.r[0][2] = 0;
-
-    ret.r[1][0] = 0;
-    ret.r[1][1] = 1;
-    ret.r[1][2] = 0;
-
-    ret.r[2][0] = 0;
-    ret.r[2][1] = 0;
-    ret.r[2][2] = 1;
-    return ret;
-}
-Vector_3D Matrix_3D::operator*(Vector_3D v) const{
-    Vector_3D result;
-    result.x = this->r[0][0] * v.x + this->r[0][1] * v.y + this->r[0][2] * v.z;
-    result.y = this->r[1][0] * v.x + this->r[1][1] * v.y + this->r[1][2] * v.z;
-    result.z = this->r[2][0] * v.x + this->r[2][1] * v.y + this->r[2][2] * v.z;
-    return result;
-}
-Matrix_3D& Matrix_3D::operator=(const Matrix_3D& other){
-        if (this != &other) {
-            for (int i = 0; i < 3; i++) {
-                for (int j = 0; j < 3; j++) {
-                    r[i][j] = other.r[i][j];
-                }
-            }
-        }
-        return *this;
-}
-Matrix_3D Matrix_3D::operator*(const Matrix_3D& other) const{
-    Matrix_3D result;
-    
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
-            for (int k = 0; k < 3; k++) {
-                result.r[i][j] += this->r[i][k] * other.r[k][j];
-            }
-        }
-    }
-    return result;
-}
-
-Matrix_3D Matrix_3D::operator*(const double scalar) const {
-    Matrix_3D result;
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
-            result.r[i][j] = r[i][j] * scalar;
-        }
-    }
-    return result;
-}
-Matrix_3D Matrix_3D::operator+(const Matrix_3D& other) const {
-        Matrix_3D result;
-        for (int i = 0; i < 3; i++) {
-            for (int j = 0; j < 3; j++) {
-                result.r[i][j] = r[i][j] + other.r[i][j];
-            }
-        }
-        return result;
-    }
-void Matrix_3D::print() const{
-    for (int i = 0; i < 3; i++) {
-        for (int j = 0; j < 3; j++) {
-            printf("%f ", r[i][j]);
-            if (j == 2) printf("\n");
-        }
-    }
-}
-
-double Matrix_3D::determinant() const{
-    double det = this->r[0][0] * (this->r[1][1] * this->r[2][2] - this->r[1][2] * this->r[2][1]) -
-        this->r[0][1] * (this->r[1][0] * this->r[2][2] - this->r[1][2] * this->r[2][0]) +
-        this->r[0][2] * (this->r[1][0] * this->r[2][1] - this->r[1][1] * this->r[2][0]);
-    return det;
-}
-Matrix_3D Matrix_3D::inverse() const{
-        double det = this->determinant();
-
-        if (det == 0.0) {
-            printf("matrix is singular no inversion possible \n");
-        }
-
-        Matrix_3D inv;
-
-        inv.r[0][0] = (this->r[1][1] * this->r[2][2] - this->r[1][2] * this->r[2][1]) / det;
-        inv.r[0][1] = (this->r[0][2] * this->r[2][1] - this->r[0][1] * this->r[2][2]) / det;
-        inv.r[0][2] = (this->r[0][1] * this->r[1][2] - this->r[0][2] * this->r[1][1]) / det;
-
-        inv.r[1][0] = (this->r[1][2] * this->r[2][0] - this->r[1][0] * this->r[2][2]) / det;
-        inv.r[1][1] = (this->r[0][0] * this->r[2][2] - this->r[0][2] * this->r[2][0]) / det;
-        inv.r[1][2] = (this->r[0][2] * this->r[1][0] - this->r[0][0] * this->r[1][2]) / det;
-
-        inv.r[2][0] = (this->r[1][0] * this->r[2][1] - this->r[1][1] * this->r[2][0]) / det;
-        inv.r[2][1] = (this->r[0][1] * this->r[2][0] - this->r[0][0] * this->r[2][1]) / det;
-        inv.r[2][2] = (this->r[0][0] * this->r[1][1] - this->r[0][1] * this->r[1][0]) / det;
-
-        return inv;
-}
-template <typename T>
-Matrix<T>::Matrix(int n, int m) : rows(n), cols(m), data(n, std::vector<T>(m, 0)) {}
-
-template <typename T>
-Matrix<T> Matrix<T>::Identity(int size) {
-    Matrix<T> ret(size, size);
-    for (int i = 0; i < size; ++i) {
-        ret.data[i][i] = 1;
-    }
-    return ret;
-}
-
-template <typename T>
-std::vector<T> Matrix<T>::operator*(const std::vector<T>& vec) const {
-    if (vec.size() != cols) {
-        printf("Vector size must match the number of matrix columns \n");
-    }
-    std::vector<T> result(rows, 0);
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
-            result[i] += data[i][j] * vec[j];
-        }
-    }
-    return result;
-}
-
-template <typename T>
-Vector<T> Matrix<T>::operator*(const Vector<T>& vec) const {
-    if (vec.get_size() != cols) {
-        printf("Vector size must match the number of matrix columns \n");
-    }
-    Vector<T> result(cols);
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
-            result.data[i] += data[i][j] * vec.data[j];
-        }
-    }
-    return result;
-}
-
-template <typename T>
-Matrix<T>& Matrix<T>::operator=(const Matrix<T>& other) {
-    if (this != &other) {
-        rows = other.rows;
-        cols = other.cols;
-        data = other.data;
-    }
-    return *this;
-}
-
-template <typename T>
-Matrix<T> Matrix<T>::operator*(const Matrix<T>& other) const {
-    if (cols != other.rows) {
-        printf("Matrix dimensions must agree for multiplication\n");
-    }
-    Matrix<T> result(rows, other.cols);
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < other.cols; ++j) {
-            for (int k = 0; k < cols; ++k) {
-                result.data[i][j] += data[i][k] * other.data[k][j];
-            }
-        }
-    }
-    return result;
-}
-
-template <typename T>
-Matrix<T> Matrix<T>::operator*(const T scalar) const {
-    Matrix<T> result(rows, cols);
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
-            result.data[i][j] = data[i][j] * scalar;
-        }
-    }
-    return result;
-}
-
-template <typename T>
-Matrix<T> Matrix<T>::operator+(const Matrix<T>& other) const {
-    if (rows != other.rows || cols != other.cols) {
-        printf("Matrix dimensions must agree for addition\n");
-    }
-    Matrix<T> result(rows, cols);
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
-            result.data[i][j] = data[i][j] + other.data[i][j];
-        }
-    }
-    return result;
-}
-
-template <typename T>
-void Matrix<T>::print() const {
-    for (const auto& row : data) {
-        for (const auto& elem : row) {
-            printf("%f ", elem) ;
-        }
-        printf("\n");
-    }
-}
-
-template <typename T>
-Matrix<T> Matrix<T>::submatrix(int excludeRow, int excludeCol) const {
-    Matrix<T> sub(rows - 1, cols - 1);
-    int subi = 0;
-    for (int i = 0; i < rows; ++i) {
-        if (i == excludeRow) continue;
-        int subj = 0;
-        for (int j = 0; j < cols; ++j) {
-            if (j == excludeCol) continue;
-            sub.data[subi][subj] = data[i][j];
-            ++subj;
-        }
-        ++subi;
-    }
-    return sub;
-}
-
-template <typename T>
-T Matrix<T>::determinant() const {
-    if (rows != cols) {
-        printf("Determinant can only be calculated for square matrices \n");
-    }
-    if (rows == 1) {
-        return data[0][0];
-    }
-    if (rows == 2) {
-        return data[0][0] * data[1][1] - data[0][1] * data[1][0];
-    }
-    T det = 0;
-    for (int j = 0; j < cols; ++j) {
-        det += (j % 2 == 0 ? 1 : -1) * data[0][j] * submatrix(0, j).determinant();
-    }
-    return det;
-}
-
-template <typename T>
-Matrix<T> Matrix<T>::adjugate() const {
-    if (rows != cols) {
-        printf("Adjugate can only be calculated for square matrices \n");
-    }
-    Matrix<T> adj(rows, cols);
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
-            adj.data[j][i] = ((i + j) % 2 == 0 ? 1 : -1) * submatrix(i, j).determinant();
-        }
-    }
-    return adj;
-}
-
-template <typename T>
-Matrix<T> Matrix<T>::inverse() const {
-    if (rows != cols) {
-        printf("Inverse can only be calculated for square matrices");
-    }
-    T det = determinant();
-    if (det == 0) {
-        printf("Matrix is singular and cannot be inverted.");
-    }
-    Matrix<T> adj = adjugate();
-    return adj * (1 / det);
-}
-
-template <typename T>
-Matrix<T> Matrix<T>::transpose() const {
-    Matrix<T> result(cols, rows);
-    for (int i = 0; i < rows; ++i) {
-        for (int j = 0; j < cols; ++j) {
-            result.data[j][i] = data[i][j];
-        }
-    }
-    return result;
-}
-
 template <typename T>
 Vector<T>::Vector(std::vector<T> data) {
     this->data = data;
@@ -475,6 +190,80 @@ Vector<T>::Vector(int size) {
 template <typename T>
 int Vector<T>::get_size() const{
     return size;
+}
+
+template <typename T>
+void Vector<T>::print() const {
+    printf("Vector: \n");
+    for (int i = 0; i < this->size; i++) {
+        printf("%f \n", this->data.at(i));
+    }
+}
+
+template <typename T>
+T Vector<T>::norm() const {
+    T sum = 0;
+    for (int i = 0; i < this->size; ++i) {
+        sum += this->data.at(i) * this->data.at(i);
+    }
+    return sqrt(sum);
+}
+
+template <typename T>
+Vector<T> Vector<T>::normalize() const {
+    if (this->norm() == 0) return *this;
+    return (*this)/this->norm();
+}
+
+template <typename T>
+Vector<T> Vector<T>::operator*(double d) const {
+    Vector result(this->size);
+    for (int i = 0; i < this->size; i++) {
+        result.data.at(i) = this->data.at(i) * d;
+    }
+    return result;
+}
+
+template <typename T>
+T Vector<T>::operator*(Vector<T> other) const {
+    if (this->size != other.size){
+        throw std::logic_error("Vectors not of same length");
+    }
+    T sum;
+    for (int i = 0; i < this->size; i++) {
+        sum = sum + this->data.at(i) * other.data.at(i);
+    }
+    return sum;
+}
+
+template <typename T>
+Vector<T> Vector<T>::operator/(double d) const {
+    Vector result(this->size);
+    for (int i = 0; i < this->size; i++) {
+        result.data.at(i) = this->data.at(i) / d;
+    }
+    return result;
+}
+
+template <typename T>
+Vector<T> Vector<T>::operator-(const Vector<T> other) const {
+    if (this->size != other.size){
+        throw std::logic_error("Vectors not of same length");
+    }
+    Vector<T> result(this->size);
+    for (int i = 0; i < other.size; i++)  {
+        result.data.at(i) = this->data.at(i) - other.data.at(i);
+    }
+    return result;
+}
+
+template<typename T>
+Vector<T>& Vector<T>::operator=(const Vector<T>& other) {
+    if (this != &other) { 
+        this->data = other.data;
+        this->size = other.size;
+    }
+    return *this;
 }
 
 double lerp(double lly, double lry, double llx, double lrx, double x) {

@@ -177,6 +177,30 @@ math/matlib.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/math/matlib.cpp.s
 .PHONY : math/matlib.cpp.s
 
+math/matrix.o: math/matrix.cpp.o
+.PHONY : math/matrix.o
+
+# target to build an object file
+math/matrix.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/math/matrix.cpp.o
+.PHONY : math/matrix.cpp.o
+
+math/matrix.i: math/matrix.cpp.i
+.PHONY : math/matrix.i
+
+# target to preprocess a source file
+math/matrix.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/math/matrix.cpp.i
+.PHONY : math/matrix.cpp.i
+
+math/matrix.s: math/matrix.cpp.s
+.PHONY : math/matrix.s
+
+# target to generate assembly for a file
+math/matrix.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/math/matrix.cpp.s
+.PHONY : math/matrix.cpp.s
+
 polynomial_fit/polynomial_fit.o: polynomial_fit/polynomial_fit.cpp.o
 .PHONY : polynomial_fit/polynomial_fit.o
 
@@ -200,6 +224,30 @@ polynomial_fit/polynomial_fit.s: polynomial_fit/polynomial_fit.cpp.s
 polynomial_fit/polynomial_fit.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/polynomial_fit/polynomial_fit.cpp.s
 .PHONY : polynomial_fit/polynomial_fit.cpp.s
+
+sin_fit/sin_fit.o: sin_fit/sin_fit.cpp.o
+.PHONY : sin_fit/sin_fit.o
+
+# target to build an object file
+sin_fit/sin_fit.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/sin_fit/sin_fit.cpp.o
+.PHONY : sin_fit/sin_fit.cpp.o
+
+sin_fit/sin_fit.i: sin_fit/sin_fit.cpp.i
+.PHONY : sin_fit/sin_fit.i
+
+# target to preprocess a source file
+sin_fit/sin_fit.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/sin_fit/sin_fit.cpp.i
+.PHONY : sin_fit/sin_fit.cpp.i
+
+sin_fit/sin_fit.s: sin_fit/sin_fit.cpp.s
+.PHONY : sin_fit/sin_fit.s
+
+# target to generate assembly for a file
+sin_fit/sin_fit.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/sin_fit/sin_fit.cpp.s
+.PHONY : sin_fit/sin_fit.cpp.s
 
 sun_sensor.o: sun_sensor.cpp.o
 .PHONY : sun_sensor.o
@@ -240,9 +288,15 @@ help:
 	@echo "... math/matlib.o"
 	@echo "... math/matlib.i"
 	@echo "... math/matlib.s"
+	@echo "... math/matrix.o"
+	@echo "... math/matrix.i"
+	@echo "... math/matrix.s"
 	@echo "... polynomial_fit/polynomial_fit.o"
 	@echo "... polynomial_fit/polynomial_fit.i"
 	@echo "... polynomial_fit/polynomial_fit.s"
+	@echo "... sin_fit/sin_fit.o"
+	@echo "... sin_fit/sin_fit.i"
+	@echo "... sin_fit/sin_fit.s"
 	@echo "... sun_sensor.o"
 	@echo "... sun_sensor.i"
 	@echo "... sun_sensor.s"
