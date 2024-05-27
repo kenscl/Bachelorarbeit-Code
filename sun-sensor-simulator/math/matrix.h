@@ -70,7 +70,7 @@ public:
     /*
      * returns the Eigen-Vectors and Eigen-Values using QR-decomposition
      */
-    void eigen(Matrix<T> &eigen_vectors, Vector<T> &eigen_values, double tolerance = 1e-6);
+    void eigen(Matrix<T> &eigen_vectors, Vector<T> &eigen_values, double tolerance = 1e-2);
 
     /*
      * Performs singlular value decompostion on itself 

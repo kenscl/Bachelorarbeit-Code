@@ -174,7 +174,7 @@ Matrix<T>& Matrix<T>::operator=(const Matrix<T>& other) {
 template <typename T>
 Matrix<T> Matrix<T>::operator*(const Matrix<T>& other) const {
     if (cols != other.rows) {
-        printf("Matrix dimensions must agree for multiplication\n");
+        throw std::logic_error("Matrix dimensions must agree for multiplication\n");
     }
     Matrix<T> result(rows, other.cols);
     for (int i = 0; i < rows; ++i) {
@@ -201,7 +201,7 @@ Matrix<T> Matrix<T>::operator*(const T scalar) const {
 template <typename T>
 Matrix<T> Matrix<T>::operator+(const Matrix<T>& other) const {
     if (rows != other.rows || cols != other.cols) {
-        printf("Matrix dimensions must agree for addition\n");
+        throw std::logic_error("Matrix dimensions must agree for addition");
     }
     Matrix<T> result(rows, cols);
     for (int i = 0; i < rows; ++i) {
@@ -217,7 +217,7 @@ void Matrix<T>::print() const {
     printf("matrix: \n");
     for (const auto& row : data) {
         for (const auto& elem : row) {
-            printf("%f ", elem) ;
+            printf("%.5f ", elem) ;
         }
         printf("\n");
     }
@@ -351,7 +351,7 @@ void Matrix<T>::QR_decomp(Matrix<T> &A, Matrix<T> &Q, Matrix<T> &R) {
         A_sum = a;
         for (int j = 0; j < E.size(); ++j) {
             Vector<double> b = E.at(j);
-            A_sum = A_sum - E.at(j) * (a * E.at(j));
+            A_sum = A_sum - b * ((a * b));
         }
 
         e = A_sum.normalize();
@@ -362,7 +362,7 @@ void Matrix<T>::QR_decomp(Matrix<T> &A, Matrix<T> &Q, Matrix<T> &R) {
     //building q from E
     for (int i = 0; i < Q.cols; ++i) {
         for (int j = 0; j < Q.rows; ++j) {
-            Q.data.at(i).at(j) = E.at(i).data.at(j);
+            Q.data.at(i).at(j) = E.at(j).data.at(i);
         }
     }
 
@@ -406,6 +406,7 @@ void Matrix<T>::eigen(Matrix<T> &eigen_vectors, Vector<T> &eigen_values, double 
 
         eigen_vectors = eigen_vectors * Q;
     } while (!has_Converged(eigen_values, prev_diag, tolerance));
+
 }
 
 template <typename T>
@@ -425,7 +426,7 @@ Matrix<T> Matrix<T>::singular_value_decomposition(Matrix<T>& U, Matrix<T>& S, Ma
             for (int j = 0; j < V.data.at(i).size(); j++) {
                 V.data.at(i).at(j) = V.data.at(i).at(j) * -1; 
             }
-        }
+        } 
         singular_values.data.at(i) = sqrt(singular_values.data.at(i));
     }
 
@@ -446,6 +447,9 @@ template <typename T>
 Matrix<T> Matrix<T>::moore_penrose() {
     Matrix<T> V, S, U;
     this->singular_value_decomposition(U, S, V);
+    //V.print();
+    //S.print();
+    //U.print();
     Matrix<T> S_plus = S;
 
     for (int i = 0; i < S_plus.rows; i++) {
@@ -459,5 +463,6 @@ Matrix<T> Matrix<T>::moore_penrose() {
 
     Matrix<T> inv;
     inv = V * S_plus * U.transpose();
+
     return inv;
 }

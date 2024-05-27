@@ -196,7 +196,7 @@ template <typename T>
 void Vector<T>::print() const {
     printf("Vector: \n");
     for (int i = 0; i < this->size; i++) {
-        printf("%f \n", this->data.at(i));
+        printf("%.15f \n", this->data.at(i));
     }
 }
 
@@ -211,7 +211,13 @@ T Vector<T>::norm() const {
 
 template <typename T>
 Vector<T> Vector<T>::normalize() const {
-    if (this->norm() == 0) return *this;
+    if (this->norm() < 1e-10) {
+        Vector<T> ret(this->size);
+        for (int i = 0; i < this->size; i++) {
+            ret.data.at(i) = 0.;
+        }
+        return ret;
+    }
     return (*this)/this->norm();
 }
 

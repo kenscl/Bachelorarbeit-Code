@@ -21,12 +21,13 @@ Matrix<double> Sin_Fit::Jacobian(int64_t degree, std::vector<double> gt_data, st
 Sin_Fit::Sin_Fit(int64_t degree, int64_t steps, std::vector<double> gt_data, std::vector<double> measurement) {
     this->degree = degree;
 
-    double ak = 1;
-    double bk = 0;
+    double ak = 0.1;
+    double bk = 0.01;
     Vector<double> params = Vector<double>((int) 2 * degree);
     this->parameters = params;
     for (int i = 0; i < params.size; i++) {
-        this->parameters.data.at(i) = 1;
+        if (i %2 == 0) this->parameters.data.at(i) = 0.3;
+        else this->parameters.data.at(i) = 0.01;
     } 
 
     /*
@@ -37,37 +38,38 @@ Sin_Fit::Sin_Fit(int64_t degree, int64_t steps, std::vector<double> gt_data, std
 
     for (int i = 0; i < steps; i++) {
         // calculating the residuals
-        std::vector<double> residuals = std::vector<double>(measurement.size());
+        Vector<double> residuals(measurement.size());
         for (uint j = 0; j < measurement.size(); j++) {
-            residuals.at(j) = measurement.at(j) - this->at(gt_data.at(j));
+            residuals.data.at(j) = measurement.at(j) - this->at(gt_data.at(j));
         }
+
         // calculating S
         double S = 0;
-        for (uint j = 0; j < residuals.size(); j++) {
-            S += residuals.at(j) * residuals.at(j);
+        for (uint j = 0; j < residuals.size; j++) {
+            S += residuals.data.at(j) * residuals.data.at(j);
         }
 
-        //calculationg Jacobian
         Matrix<double> jacobian = this->Jacobian(degree, gt_data, measurement);
+
         Matrix<double> I = Matrix<double>::Identity(jacobian.cols);
-        Matrix<double> inv_pre((jacobian.transpose() * jacobian + I * bk));
 
-        //we usue moore penrose inversion as the matrix is often singular
-        Matrix<double> inv = inv_pre.moore_penrose();
+        Matrix<double> JtJ = jacobian.transpose() * jacobian;
+        Matrix<double> JtJ_reg = JtJ + I * bk;
 
-        jacobian.print();
-        (inv * jacobian.transpose()).print();
-        printf("hre \n");
-        this->parameters = this->parameters - inv * jacobian.transpose() * this->parameters * ak;
+        Matrix<double> inv = JtJ_reg.moore_penrose();
+
+        Vector<double> delta_params = inv * jacobian.transpose() * residuals * ak;
+        this->parameters = this->parameters - delta_params;
     }
-
 
 }
 
 double Sin_Fit::at(double x) {
     double sum = 0;
-    for (int i = 0; i < this->degree; i+=2) { 
-        sum += this->parameters.data.at(i) * sin (this->parameters.data.at(i+1) * x);
+    for (int k = 0; k < this->degree; ++k) {
+        double amp_param = this->parameters.data.at(2 * k);
+        double freq_param = this->parameters.data.at(2 * k + 1);
+        sum += amp_param * sin(freq_param * x);
     }
     return sum;
 }
