@@ -15,15 +15,13 @@ jobs:
       with:
         cmake-version: '3.19.2' # Use the appropriate version of CMake
 
-    - name: Navigate to C++ project directory
-      run: cd Bachelorarbeit-Code/sun-sensor-simulator
-
     - name: Configure
-      run: cmake -S . -B build
+      run: cmake -S ./sun-sensor-simulator/ -B ./sun-sensor-simulator/build
 
     - name: Build
-      run: cmake --build build
+      run: cmake --build ./sun-sensor-simulator/build
 
     - name: Run tests
-      run: ctest --test-dir build
+      run: cd ./sun-sensor-simulator/build/
+      run: ctest ./all_tests 
 
