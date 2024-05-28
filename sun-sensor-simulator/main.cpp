@@ -4,6 +4,10 @@
 #include "polynomial_fit/polynomial_fit.h"
 #include "sin_fit/sin_fit.h"
 #include "matplotlibcpp.h"
+
+#define R2D     180 / M_PI
+#define D2R     M_PI / 180
+
 namespace plt = matplotlibcpp;
 int main () {
     //Matrix<double> A(3,3);
@@ -32,20 +36,18 @@ int main () {
     std::vector<double> x;
     std::vector<double> ref;
     Sun_Sensor ss;
-    for (double i = - 60; i < 60; i += 0.1) {
-        res_v1.push_back(ss.generate_response_v1(i, i).x );
-        res_v2.push_back(ss.generate_response_v2(i, i).x );
+    for (double i = - 60 * D2R; i < 60 * D2R; i += 0.1 * D2R) {
         res_v3.push_back(ss.generate_response_v3(i, i).x );
         printf("%f %f \n", i, ss.generate_response_v3(i, i).x);
         ref.push_back(i);
-        x.push_back(i * M_PI / 180);
+        x.push_back(i);
     }
 
     std::vector<double> pf_res;
     std::vector<double> pf_cor;
     //Polynomial_Fit pf(7, ref, res_v3);
     //pf_cor = pf.calc(res_v3);
-    Sin_Fit sf(1, 900, x, res_v3);
+    Sin_Fit sf(1, 5000, x, res_v3);
     pf_cor = sf.calc(res_v3);
     pf_res = sf.calc(ref);
     sf.parameters.print();
@@ -53,9 +55,9 @@ int main () {
     //plt::named_plot("gt", x, ref);
     plt::named_plot("polfit", x, pf_res);
     plt::named_plot("polfit_cor", x, pf_cor);
-    plt::named_plot("1. sin (x) term", x, res_v1);
+    //plt::named_plot("1. sin (x) term", x, res_v1);
     //plt::named_plot("3. sine (x) terms", x, res_v2);
-    //plt::named_plot("6. sine (x) terms", x, res_v3);
+    plt::named_plot("6. sine (x) terms", x, res_v3);
     plt::legend();
     plt::xlabel("INCIDENT LIGHT ANGLE (Degrees)");
     plt::ylabel("ANGULAR RESPONSE (Ratio)");

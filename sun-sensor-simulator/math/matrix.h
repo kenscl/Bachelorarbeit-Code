@@ -47,6 +47,7 @@ public:
     Matrix<T> operator*(const Matrix<T>& other) const;
     Matrix<T> operator*(const T scalar) const;
     Matrix<T> operator+(const Matrix<T>& other) const;
+    Matrix<T> operator-(const Matrix<T>& other) const;
 
     void print() const;
 
@@ -56,11 +57,15 @@ public:
     Matrix<T> inverse() const;
 
     Matrix<T> transpose() const;
+    Vector<T> get_col(int col) const;
+    void swap_rows(int row1, int row2);
 
 /*
  * this section implements the more complex linear algebra algorithms
  */
 public: 
+
+    Vector<T> gaussian_elimination(Matrix<T> A, Vector<T> b);
     /*
      * This Algrithm does QR decomposition using Gram-Schmidt on the Matrix A.
      * if A is 
@@ -70,7 +75,7 @@ public:
     /*
      * returns the Eigen-Vectors and Eigen-Values using QR-decomposition
      */
-    void eigen(Matrix<T> &eigen_vectors, Vector<T> &eigen_values, double tolerance = 1e-2);
+    void eigen(Matrix<T> &eigen_vectors, Vector<T> &eigen_values, double tolerance = 1e-6);
 
     /*
      * Performs singlular value decompostion on itself 

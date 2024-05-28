@@ -1,76 +1,73 @@
 #include <gtest/gtest.h>
-#include "../math/matrix.h" // Assuming you have your Matrix_3D and Matrix classes in matrix.h
+#include "../math/matrix.h" 
+#include "../math/matlib.h"
 
-TEST(Matrix3DTest, Determinant) {
-    Matrix_3D mat;
-    mat.r[0][0] = 1; mat.r[0][1] = 2; mat.r[0][2] = 3;
-    mat.r[1][0] = 0; mat.r[1][1] = 1; mat.r[1][2] = 4;
-    mat.r[2][0] = 5; mat.r[2][1] = 6; mat.r[2][2] = 0;
+TEST(Matrix, QR_DECOMP) {
+    Matrix<double> A(3,3), Q(3,3), R(3,3);
+    A.data[0][0] = 1;
+    A.data[0][1] = 2;
+    A.data[0][2] = 3;
 
-    EXPECT_NEAR(mat.determinant(), 1, 1e-9);
-}
+    A.data[1][0] = 4;
+    A.data[1][1] = 5;
+    A.data[1][2] = 6;
 
-TEST(Matrix3DTest, Inverse) {
-    Matrix_3D mat;
-    mat.r[0][0] = 1; mat.r[0][1] = 2; mat.r[0][2] = 3;
-    mat.r[1][0] = 0; mat.r[1][1] = 1; mat.r[1][2] = 4;
-    mat.r[2][0] = 5; mat.r[2][1] = 6; mat.r[2][2] = 0;
+    A.data[2][0] = 7;
+    A.data[2][1] = 8;
+    A.data[2][2] = 9;
 
-    Matrix_3D inv = mat.inverse();
+    A.data[0][0] = 12;
+    A.data[0][1] = -51;
+    A.data[0][2] = 4;
 
-    Matrix_3D identity = mat * inv;
+    A.data[1][0] = 6;
+    A.data[1][1] = 167;
+    A.data[1][2] = -68;
 
-    for (int i = 0; i < 3; ++i) {
-        for (int j = 0; j < 3; ++j) {
-            if (i == j) {
-                EXPECT_NEAR(identity.r[i][j], 1.0, 1e-9);
-            } else {
-                EXPECT_NEAR(identity.r[i][j], 0.0, 1e-9);
-            }
+    A.data[2][0] = -4;
+    A.data[2][1] = 24;
+    A.data[2][2] = -41;
+
+    A.QR_decomp(A, Q, R);
+
+    Matrix<double> A_test = (Q * R);
+
+    for (int i = 0; i < 3; i++) {
+        for (int j = 0; j < 3;j++) {
+             EXPECT_NEAR(A.data[i][j], A_test.data[i][j], 1e-6);
         }
     }
+    Q.print();
+    R.print();
 }
 
-TEST(MatrixTest, Identity) {
-    Matrix<double> identity = Matrix<double>::Identity(3);
-    for (int i = 0; i < 3; ++i) {
-        for (int j = 0; j < 3; ++j) {
-            if (i == j) {
-                EXPECT_DOUBLE_EQ(identity.data[i][j], 1.0);
-            } else {
-                EXPECT_DOUBLE_EQ(identity.data[i][j], 0.0);
-            }
+TEST(Matrix, EIGEN) {
+    Matrix<double> A(3,3);
+    A.data[0][0] = 1;
+    A.data[0][1] = 2;
+    A.data[0][2] = 3;
+
+    A.data[1][0] = 4;
+    A.data[1][1] = 5;
+    A.data[1][2] = 6;
+
+    A.data[2][0] = 7;
+    A.data[2][1] = 8;
+    A.data[2][2] = 9;
+
+    Vector<double> eigen_values;
+    Matrix<double> eigen_vectors;
+
+    A.eigen(eigen_vectors, eigen_values);
+    eigen_vectors.print();
+    eigen_values.print();
+    for (int i = 0; i < eigen_values.size; i++) {
+        Vector<double> Av = A * eigen_vectors.get_col(i);
+        Vector<double> lv = eigen_vectors.get_col(i) * eigen_values.data.at(i);
+        for(int j = 0; j < Av.size; ++j){
+            EXPECT_NEAR(Av.data.at(j), lv.data.at(j), 1e-6);
         }
-    }
-}
 
-TEST(MatrixTest, Determinant) {
-    Matrix<double> mat(3, 3);
-    mat.data = {{1, 2, 3},
-                {0, 1, 4},
-                {5, 6, 0}};
-
-    EXPECT_NEAR(mat.determinant(), 1.0, 1e-9);
-}
-
-TEST(MatrixTest, Inverse) {
-    Matrix<double> mat(3, 3);
-    mat.data = {{1, 2, 3},
-                {0, 1, 4},
-                {5, 6, 0}};
-
-    Matrix<double> inv = mat.inverse();
-
-    Matrix<double> identity = mat * inv;
-
-    for (int i = 0; i < 3; ++i) {
-        for (int j = 0; j < 3; ++j) {
-            if (i == j) {
-                EXPECT_NEAR(identity.data[i][j], 1.0, 1e-9);
-            } else {
-                EXPECT_NEAR(identity.data[i][j], 0.0, 1e-9);
-            }
-        }
     }
 }
 

@@ -9,7 +9,7 @@ class Sin_Fit {
         Vector<double> parameters;
 
     private:
-        Matrix<double> Jacobian(int64_t degree, std::vector<double> gt_data, std::vector<double> measurement);
+        Matrix<double> Jacobian(int64_t degree, const std::vector<double> &gt_data);
 
     public:
         /*

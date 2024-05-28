@@ -252,6 +252,26 @@ Vector<T> Vector<T>::operator/(double d) const {
 }
 
 template <typename T>
+Vector<T> Vector<T>::operator+(const Vector<T> other) const {
+    if (this->size != other.size){
+        throw std::logic_error("Vectors not of same length");
+    }
+    Vector<T> result(this->size);
+    for (int i = 0; i < other.size; i++)  {
+        result.data.at(i) = this->data.at(i) + other.data.at(i);
+    }
+    return result;
+}
+
+template <typename T>
+Matrix<T> Vector<T>::transpose() const {
+    Matrix<T> result(1, this->size);
+    for(int i = 0; i < this->size; i++) {
+        result.data.at(0).at(i) = this->data.at(i);
+    }
+    return result;
+}
+template <typename T>
 Vector<T> Vector<T>::operator-(const Vector<T> other) const {
     if (this->size != other.size){
         throw std::logic_error("Vectors not of same length");

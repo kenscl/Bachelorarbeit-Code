@@ -57,11 +57,13 @@ class Vector {
         void print() const;
         T norm() const;
         Vector<T> normalize() const;
+        Matrix<T> transpose() const;
         
         Vector<T> operator*(double d) const;
         T operator*(Vector<T> other) const;
         Vector<T> operator/(double d) const;
         Vector<T> operator-(const Vector<T> other) const;
+        Vector<T> operator+(const Vector<T> other) const;
         Vector<T>& operator=(const Vector<T>& other);
 };
 

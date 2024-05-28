@@ -75,6 +75,7 @@ Matrix_3D Matrix_3D::operator+(const Matrix_3D& other) const {
         }
         return result;
     }
+
 void Matrix_3D::print() const{
     for (int i = 0; i < 3; i++) {
         for (int j = 0; j < 3; j++) {
@@ -213,6 +214,20 @@ Matrix<T> Matrix<T>::operator+(const Matrix<T>& other) const {
 }
 
 template <typename T>
+Matrix<T> Matrix<T>::operator-(const Matrix<T>& other) const {
+    if (rows != other.rows || cols != other.cols) {
+        throw std::logic_error("Matrix dimensions must agree for addition");
+    }
+    Matrix<T> result(rows, cols);
+    for (int i = 0; i < rows; ++i) {
+        for (int j = 0; j < cols; ++j) {
+            result.data[i][j] = data[i][j] - other.data[i][j];
+        }
+    }
+    return result;
+}
+
+template <typename T>
 void Matrix<T>::print() const {
     printf("matrix: \n");
     for (const auto& row : data) {
@@ -321,54 +336,107 @@ Matrix<T> Matrix<T>::transpose() const {
 }
 
 template <typename T>
+Vector<T> Matrix<T>::get_col(int col) const {
+    if (col < 0 || col >= cols) {
+        throw std::out_of_range("Column index out of range");
+    }
+
+    Vector<T> column(rows);
+    for (int i = 0; i < rows; ++i) {
+        column.data.at(i) = this->data.at(i).at(col);
+    }
+    return column;
+}
+
+template <typename T>
+void Matrix<T>::swap_rows(int row1, int row2) {
+    if (row1 < 0 || row1 >= rows || row2 < 0 || row2 >= rows) {
+        throw std::out_of_range("Row index out of range");
+    }
+
+    for (int j = 0; j < cols; ++j) {
+        std::swap(this->data.at(row1).at(j), this->data.at(row2).at(j));
+    }
+}
+
+template <typename T>
+Vector<T> gaussian_elimination(Matrix<T> A, Vector<T> b) {
+       int n = A.size();
+
+       for (int i = 0; i < n - 1; ++i) {
+           int pivot_row = i;
+           for (int k = i + 1; k < n; ++k) {
+               if (std::abs(A.data[k][i]) > std::abs(A.data[pivot_row][i])) {
+                   pivot_row = k;
+               }
+           }
+           if (pivot_row != i) {
+               A = A.swap_rows(i, pivot_row);
+               b.data.swap(i, pivot_row);
+           }
+
+           for (int k = i + 1; k < n; ++k) {
+               double factor = A.data[k][i] / A.data[i][i];
+               for (int j = i; j < n; ++j) {
+                   A.data[k][j] -= factor * A.data[i][j];
+               }
+               b.data[k] -= factor * b.data[i];
+           }
+       }
+
+       // Back substitution
+       Vector<T> x(n);
+       for (int i = n - 1; i >= 0; --i) {
+           double sum = 0.0;
+           for (int j = i + 1; j < n; ++j) {
+               sum += A.data[i][j] * x.data[j];
+           }
+           x.data[i] = (b.data[i] - sum) / A.data[i][i];
+       }
+
+       return x;
+
+}
+
+template <typename T>
 void Matrix<T>::QR_decomp(Matrix<T> &A, Matrix<T> &Q, Matrix<T> &R) {
     if (A.cols != A.rows) {
-        throw std::logic_error("A is not suited to QR decoposition");
+        throw std::logic_error("A is not suited to QR decomposition");
     }
-    int n = A.cols;
-    Q = Matrix(n,n);
-    R = A;
+    int n = A.rows;
+    Matrix<double> A_cp = A;
+    Q = Matrix<double>::Identity(n);
 
-    std::vector<Vector<T>> U;
-    std::vector<Vector<T>> E;
-    // Gram-Schmidt 
-    // initilisation
-    Vector<T> u1(A.rows);
-    for (int i = 0; i < A.rows; ++i) {
-        u1.data.at(i) = A.data.at(i).at(0);
-    }
-    
-    U.push_back(u1);
-    E.push_back(u1.normalize());
-
-    // itteration
-    for (int i = 1; i < n; i++) {
-       Vector<T> u(A.rows), a(A.rows), A_sum(A.rows), e(A.rows);
-        for (int j = 0; j < A.rows; ++j) {
-            a.data.at(j) = A.data.at(j).at(i);
+    for (int k = 0; k < n; ++k) {
+        // Find Householder reflector
+        Vector<double> x = A_cp.get_col(k);
+        for (int i = 0; i < k; ++i) {
+            x.data[i] = 0; // Zero out the upper part
+        }
+        double alpha = x.norm();
+        if (A.data[k][k] < 0) {
+            alpha = abs(alpha);
+        }
+        else {
+            alpha = -abs(alpha);
         }
 
-        A_sum = a;
-        for (int j = 0; j < E.size(); ++j) {
-            Vector<double> b = E.at(j);
-            A_sum = A_sum - b * ((a * b));
-        }
+        Vector<double> e(n);
+        e.data[k] = 1.0;
+        Vector<double> v = (x + e * alpha).normalize();
 
-        e = A_sum.normalize();
-        U.push_back(A_sum);
-        E.push_back(e);
-    }
-    
-    //building q from E
-    for (int i = 0; i < Q.cols; ++i) {
-        for (int j = 0; j < Q.rows; ++j) {
-            Q.data.at(i).at(j) = E.at(j).data.at(i);
+        Matrix<double> v_mat(n, 1);
+        for (int i = 0; i < n; ++i) {
+            v_mat.data[i][0] = v.data[i];
         }
+        Matrix<double> H = Matrix<double>::Identity(n) - (v_mat * v_mat.transpose()) * 2.0;
+
+        A_cp = H * A_cp;
+        Q = Q * H.transpose();
     }
 
-    // calculationg R 
-    R = Q.transpose() * A;
-
+    R = A_cp;
+    Q = Q; // Q should be orthogonal
 }
 
 //helper
@@ -383,6 +451,22 @@ bool has_Converged(Vector<T>& diagonal, const Vector<T>& prevDiagonal, double to
 }
 
 template <typename T>
+Vector<T> back_substitution(Matrix<T> &R, Vector<T> &b) {
+    int n = R.rows;
+    Vector<T> x(n);
+
+    for (int i = n - 1; i >= 0; --i) {
+        T sum = 0;
+        for (int j = i + 1; j < n; ++j) {
+            sum += R.data[i][j] * x.data[j];
+        }
+        x.data[i] = (b.data[i] - sum) / R.data[i][i];
+    }
+
+    return x;
+}
+
+template <typename T>
 void Matrix<T>::eigen(Matrix<T> &eigen_vectors, Vector<T> &eigen_values, double tolerance){
     int n = this->cols; 
     Matrix <T> A = *this;
@@ -391,20 +475,17 @@ void Matrix<T>::eigen(Matrix<T> &eigen_vectors, Vector<T> &eigen_values, double 
     eigen_vectors = Matrix<T>::Identity(n);
     Vector<T> prev_diag(n);
 
-    // i do not like this but its easyer :(
+    Matrix<T> Q;
+    Matrix<T> R;
     do {
         prev_diag = eigen_values;
-        Matrix<T> Q;
-        Matrix<T> R;
 
         QR_decomp(A, Q, R);
-        A = R * Q;
+        A = Q.transpose() * A * Q;
 
         for (int i = 0; i < n; ++i) {
             eigen_values.data.at(i) = A.data.at(i).at(i);
         }
-
-        eigen_vectors = eigen_vectors * Q;
     } while (!has_Converged(eigen_values, prev_diag, tolerance));
 
 }
@@ -447,9 +528,6 @@ template <typename T>
 Matrix<T> Matrix<T>::moore_penrose() {
     Matrix<T> V, S, U;
     this->singular_value_decomposition(U, S, V);
-    //V.print();
-    //S.print();
-    //U.print();
     Matrix<T> S_plus = S;
 
     for (int i = 0; i < S_plus.rows; i++) {
