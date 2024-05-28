@@ -21,8 +21,8 @@ Matrix<double> Sin_Fit::Jacobian(int64_t degree, std::vector<double> gt_data, st
 Sin_Fit::Sin_Fit(int64_t degree, int64_t steps, std::vector<double> gt_data, std::vector<double> measurement) {
     this->degree = degree;
 
-    double ak = 0.1;
-    double bk = 0.01;
+    double ak = 0.0001;
+    double bk = 0.0001;
     Vector<double> params = Vector<double>((int) 2 * degree);
     this->parameters = params;
     for (int i = 0; i < params.size; i++) {
@@ -37,6 +37,7 @@ Sin_Fit::Sin_Fit(int64_t degree, int64_t steps, std::vector<double> gt_data, std
      */
 
     for (int i = 0; i < steps; i++) {
+    this->parameters.print();
         // calculating the residuals
         Vector<double> residuals(measurement.size());
         for (uint j = 0; j < measurement.size(); j++) {

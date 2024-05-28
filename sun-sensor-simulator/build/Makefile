@@ -65,6 +65,16 @@ CMAKE_BINARY_DIR = /home/ken/uni/bachelorarbeit/Bachelorarbeit-Code/sun-sensor-s
 #=============================================================================
 # Targets provided globally by CMake.
 
+# Special rule for the target test
+test:
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Running tests..."
+	/usr/bin/ctest --force-new-ctest-process $(ARGS)
+.PHONY : test
+
+# Special rule for the target test
+test/fast: test
+.PHONY : test/fast
+
 # Special rule for the target edit_cache
 edit_cache:
 	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Running CMake cache editor..."
@@ -84,6 +94,51 @@ rebuild_cache:
 # Special rule for the target rebuild_cache
 rebuild_cache/fast: rebuild_cache
 .PHONY : rebuild_cache/fast
+
+# Special rule for the target list_install_components
+list_install_components:
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Available install components are: \"Unspecified\""
+.PHONY : list_install_components
+
+# Special rule for the target list_install_components
+list_install_components/fast: list_install_components
+.PHONY : list_install_components/fast
+
+# Special rule for the target install
+install: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install
+
+# Special rule for the target install
+install/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Install the project..."
+	/usr/bin/cmake -P cmake_install.cmake
+.PHONY : install/fast
+
+# Special rule for the target install/local
+install/local: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local
+
+# Special rule for the target install/local
+install/local/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing only the local directory..."
+	/usr/bin/cmake -DCMAKE_INSTALL_LOCAL_ONLY=1 -P cmake_install.cmake
+.PHONY : install/local/fast
+
+# Special rule for the target install/strip
+install/strip: preinstall
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip
+
+# Special rule for the target install/strip
+install/strip/fast: preinstall/fast
+	@$(CMAKE_COMMAND) -E cmake_echo_color "--switch=$(COLOR)" --cyan "Installing the project stripped..."
+	/usr/bin/cmake -DCMAKE_INSTALL_DO_STRIP=1 -P cmake_install.cmake
+.PHONY : install/strip/fast
 
 # The main all target
 all: cmake_check_build_system
@@ -129,6 +184,71 @@ sun-sensor-simulator/fast:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/build
 .PHONY : sun-sensor-simulator/fast
 
+#=============================================================================
+# Target rules for targets named all_tests
+
+# Build rule for target.
+all_tests: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 all_tests
+.PHONY : all_tests
+
+# fast build rule for target.
+all_tests/fast:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/all_tests.dir/build.make CMakeFiles/all_tests.dir/build
+.PHONY : all_tests/fast
+
+#=============================================================================
+# Target rules for targets named gmock
+
+# Build rule for target.
+gmock: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gmock
+.PHONY : gmock
+
+# fast build rule for target.
+gmock/fast:
+	$(MAKE) $(MAKESILENT) -f _deps/googletest-build/googlemock/CMakeFiles/gmock.dir/build.make _deps/googletest-build/googlemock/CMakeFiles/gmock.dir/build
+.PHONY : gmock/fast
+
+#=============================================================================
+# Target rules for targets named gmock_main
+
+# Build rule for target.
+gmock_main: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gmock_main
+.PHONY : gmock_main
+
+# fast build rule for target.
+gmock_main/fast:
+	$(MAKE) $(MAKESILENT) -f _deps/googletest-build/googlemock/CMakeFiles/gmock_main.dir/build.make _deps/googletest-build/googlemock/CMakeFiles/gmock_main.dir/build
+.PHONY : gmock_main/fast
+
+#=============================================================================
+# Target rules for targets named gtest
+
+# Build rule for target.
+gtest: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gtest
+.PHONY : gtest
+
+# fast build rule for target.
+gtest/fast:
+	$(MAKE) $(MAKESILENT) -f _deps/googletest-build/googletest/CMakeFiles/gtest.dir/build.make _deps/googletest-build/googletest/CMakeFiles/gtest.dir/build
+.PHONY : gtest/fast
+
+#=============================================================================
+# Target rules for targets named gtest_main
+
+# Build rule for target.
+gtest_main: cmake_check_build_system
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/Makefile2 gtest_main
+.PHONY : gtest_main
+
+# fast build rule for target.
+gtest_main/fast:
+	$(MAKE) $(MAKESILENT) -f _deps/googletest-build/googletest/CMakeFiles/gtest_main.dir/build.make _deps/googletest-build/googletest/CMakeFiles/gtest_main.dir/build
+.PHONY : gtest_main/fast
+
 main.o: main.cpp.o
 .PHONY : main.o
 
@@ -159,6 +279,7 @@ math/matlib.o: math/matlib.cpp.o
 # target to build an object file
 math/matlib.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/math/matlib.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/all_tests.dir/build.make CMakeFiles/all_tests.dir/math/matlib.cpp.o
 .PHONY : math/matlib.cpp.o
 
 math/matlib.i: math/matlib.cpp.i
@@ -167,6 +288,7 @@ math/matlib.i: math/matlib.cpp.i
 # target to preprocess a source file
 math/matlib.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/math/matlib.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/all_tests.dir/build.make CMakeFiles/all_tests.dir/math/matlib.cpp.i
 .PHONY : math/matlib.cpp.i
 
 math/matlib.s: math/matlib.cpp.s
@@ -175,6 +297,7 @@ math/matlib.s: math/matlib.cpp.s
 # target to generate assembly for a file
 math/matlib.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/math/matlib.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/all_tests.dir/build.make CMakeFiles/all_tests.dir/math/matlib.cpp.s
 .PHONY : math/matlib.cpp.s
 
 math/matrix.o: math/matrix.cpp.o
@@ -183,6 +306,7 @@ math/matrix.o: math/matrix.cpp.o
 # target to build an object file
 math/matrix.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/math/matrix.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/all_tests.dir/build.make CMakeFiles/all_tests.dir/math/matrix.cpp.o
 .PHONY : math/matrix.cpp.o
 
 math/matrix.i: math/matrix.cpp.i
@@ -191,6 +315,7 @@ math/matrix.i: math/matrix.cpp.i
 # target to preprocess a source file
 math/matrix.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/math/matrix.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/all_tests.dir/build.make CMakeFiles/all_tests.dir/math/matrix.cpp.i
 .PHONY : math/matrix.cpp.i
 
 math/matrix.s: math/matrix.cpp.s
@@ -199,6 +324,7 @@ math/matrix.s: math/matrix.cpp.s
 # target to generate assembly for a file
 math/matrix.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/math/matrix.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/all_tests.dir/build.make CMakeFiles/all_tests.dir/math/matrix.cpp.s
 .PHONY : math/matrix.cpp.s
 
 polynomial_fit/polynomial_fit.o: polynomial_fit/polynomial_fit.cpp.o
@@ -207,6 +333,7 @@ polynomial_fit/polynomial_fit.o: polynomial_fit/polynomial_fit.cpp.o
 # target to build an object file
 polynomial_fit/polynomial_fit.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/polynomial_fit/polynomial_fit.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/all_tests.dir/build.make CMakeFiles/all_tests.dir/polynomial_fit/polynomial_fit.cpp.o
 .PHONY : polynomial_fit/polynomial_fit.cpp.o
 
 polynomial_fit/polynomial_fit.i: polynomial_fit/polynomial_fit.cpp.i
@@ -215,6 +342,7 @@ polynomial_fit/polynomial_fit.i: polynomial_fit/polynomial_fit.cpp.i
 # target to preprocess a source file
 polynomial_fit/polynomial_fit.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/polynomial_fit/polynomial_fit.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/all_tests.dir/build.make CMakeFiles/all_tests.dir/polynomial_fit/polynomial_fit.cpp.i
 .PHONY : polynomial_fit/polynomial_fit.cpp.i
 
 polynomial_fit/polynomial_fit.s: polynomial_fit/polynomial_fit.cpp.s
@@ -223,6 +351,7 @@ polynomial_fit/polynomial_fit.s: polynomial_fit/polynomial_fit.cpp.s
 # target to generate assembly for a file
 polynomial_fit/polynomial_fit.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/polynomial_fit/polynomial_fit.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/all_tests.dir/build.make CMakeFiles/all_tests.dir/polynomial_fit/polynomial_fit.cpp.s
 .PHONY : polynomial_fit/polynomial_fit.cpp.s
 
 sin_fit/sin_fit.o: sin_fit/sin_fit.cpp.o
@@ -231,6 +360,7 @@ sin_fit/sin_fit.o: sin_fit/sin_fit.cpp.o
 # target to build an object file
 sin_fit/sin_fit.cpp.o:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/sin_fit/sin_fit.cpp.o
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/all_tests.dir/build.make CMakeFiles/all_tests.dir/sin_fit/sin_fit.cpp.o
 .PHONY : sin_fit/sin_fit.cpp.o
 
 sin_fit/sin_fit.i: sin_fit/sin_fit.cpp.i
@@ -239,6 +369,7 @@ sin_fit/sin_fit.i: sin_fit/sin_fit.cpp.i
 # target to preprocess a source file
 sin_fit/sin_fit.cpp.i:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/sin_fit/sin_fit.cpp.i
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/all_tests.dir/build.make CMakeFiles/all_tests.dir/sin_fit/sin_fit.cpp.i
 .PHONY : sin_fit/sin_fit.cpp.i
 
 sin_fit/sin_fit.s: sin_fit/sin_fit.cpp.s
@@ -247,6 +378,7 @@ sin_fit/sin_fit.s: sin_fit/sin_fit.cpp.s
 # target to generate assembly for a file
 sin_fit/sin_fit.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/sin_fit/sin_fit.cpp.s
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/all_tests.dir/build.make CMakeFiles/all_tests.dir/sin_fit/sin_fit.cpp.s
 .PHONY : sin_fit/sin_fit.cpp.s
 
 sun_sensor.o: sun_sensor.cpp.o
@@ -273,6 +405,30 @@ sun_sensor.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/sun-sensor-simulator.dir/build.make CMakeFiles/sun-sensor-simulator.dir/sun_sensor.cpp.s
 .PHONY : sun_sensor.cpp.s
 
+test/test_matrix.o: test/test_matrix.cpp.o
+.PHONY : test/test_matrix.o
+
+# target to build an object file
+test/test_matrix.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/all_tests.dir/build.make CMakeFiles/all_tests.dir/test/test_matrix.cpp.o
+.PHONY : test/test_matrix.cpp.o
+
+test/test_matrix.i: test/test_matrix.cpp.i
+.PHONY : test/test_matrix.i
+
+# target to preprocess a source file
+test/test_matrix.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/all_tests.dir/build.make CMakeFiles/all_tests.dir/test/test_matrix.cpp.i
+.PHONY : test/test_matrix.cpp.i
+
+test/test_matrix.s: test/test_matrix.cpp.s
+.PHONY : test/test_matrix.s
+
+# target to generate assembly for a file
+test/test_matrix.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/all_tests.dir/build.make CMakeFiles/all_tests.dir/test/test_matrix.cpp.s
+.PHONY : test/test_matrix.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -280,7 +436,17 @@ help:
 	@echo "... clean"
 	@echo "... depend"
 	@echo "... edit_cache"
+	@echo "... install"
+	@echo "... install/local"
+	@echo "... install/strip"
+	@echo "... list_install_components"
 	@echo "... rebuild_cache"
+	@echo "... test"
+	@echo "... all_tests"
+	@echo "... gmock"
+	@echo "... gmock_main"
+	@echo "... gtest"
+	@echo "... gtest_main"
 	@echo "... sun-sensor-simulator"
 	@echo "... main.o"
 	@echo "... main.i"
@@ -300,6 +466,9 @@ help:
 	@echo "... sun_sensor.o"
 	@echo "... sun_sensor.i"
 	@echo "... sun_sensor.s"
+	@echo "... test/test_matrix.o"
+	@echo "... test/test_matrix.i"
+	@echo "... test/test_matrix.s"
 .PHONY : help
 
 
