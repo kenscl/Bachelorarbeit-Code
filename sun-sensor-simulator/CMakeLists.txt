@@ -37,16 +37,23 @@ set(SOURCES
     main.cpp
 )
 
-set(MATPLOTLIB_CPP_DIR "matplotlib-cpp/")
+if(NOT DEFINED ENV{GITHUB_ACTIONS})
+    # Only include matplotlib-cpp if not running on GitHub Actions
+    set(MATPLOTLIB_CPP_DIR "matplotlib-cpp/")
 
-find_package(Python3 COMPONENTS Development NumPy REQUIRED)
+    find_package(Python3 COMPONENTS Development NumPy REQUIRED)
 
-include_directories(${MATPLOTLIB_CPP_DIR})
-include_directories(${Python3_INCLUDE_DIRS} ${Python3_NumPy_INCLUDE_DIRS})
+    include_directories(${MATPLOTLIB_CPP_DIR})
+    include_directories(${Python3_INCLUDE_DIRS} ${Python3_NumPy_INCLUDE_DIRS})
+endif()
 
 add_executable(${PROJECT_NAME} ${MATH} ${SOURCES} ${POLFIT} ${SINFIT})
-target_include_directories(${PROJECT_NAME} PRIVATE ${MATPLOTLIB_CPP_DIR})
-target_link_libraries(${PROJECT_NAME} PRIVATE ${Python3_LIBRARIES})
+
+if(NOT DEFINED ENV{GITHUB_ACTIONS})
+    # Only link matplotlib-cpp if not running on GitHub Actions
+    target_include_directories(${PROJECT_NAME} PRIVATE ${MATPLOTLIB_CPP_DIR})
+    target_link_libraries(${PROJECT_NAME} PRIVATE ${Python3_LIBRARIES})
+endif()
 
 # Test executable without matplotlib-cpp and Python3
 enable_testing()
@@ -54,4 +61,6 @@ enable_testing()
 add_executable(all_tests test/test_matrix.cpp ${MATH} ${POLFIT} ${SINFIT})
 target_link_libraries(all_tests gtest gtest_main)
 
+# Add tests
 add_test(NAME MatrixTest COMMAND all_tests)
+
