@@ -16,7 +16,7 @@ jobs:
         cmake-version: '3.19.2' # Use the appropriate version of CMake
 
     - name: Navigate to C++ project directory
-      run: cd sun-sensor-simulator/
+      run: cd Bachelorarbeit-Code/sun-sensor-simulator
 
     - name: Configure
       run: cmake -S . -B build
