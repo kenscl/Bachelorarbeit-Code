@@ -21,7 +21,8 @@ jobs:
     - name: Build
       run: cmake --build ./sun-sensor-simulator/build
 
-    - name: Run tests
+    - name: cd to tests
       run: cd ./sun-sensor-simulator/build/
+    - name: Run tests
       run: ctest ./all_tests 
 
