@@ -15,8 +15,11 @@ jobs:
       with:
         cmake-version: '3.19.2' # Use the appropriate version of CMake
 
+    - name: Install Python dependencies
+      run: sudo apt-get install python3-dev python3-numpy
+
     - name: Configure
-      run: cmake -S sun-sensor-simulator/ -B build
+      run: cmake -S . -B build
 
     - name: Build
       run: cmake --build build
