@@ -26,6 +26,10 @@ set(POLFIT
     polynomial_fit/polynomial_fit.cpp
 )
 
+set(LUT
+    lut/lut.h
+    lut/lut.cpp
+)
 set(SINFIT
     sin_fit/sin_fit.h
     sin_fit/sin_fit.cpp
@@ -45,7 +49,7 @@ if(NOT DEFINED ENV{GITHUB_ACTIONS})
     include_directories(${MATPLOTLIB_CPP_DIR})
     include_directories(${Python3_INCLUDE_DIRS} ${Python3_NumPy_INCLUDE_DIRS})
 
-add_executable(${PROJECT_NAME} ${MATH} ${SOURCES} ${POLFIT} ${SINFIT})
+    add_executable(${PROJECT_NAME} ${MATH} ${SOURCES} ${POLFIT} ${SINFIT} ${LUT})
 
     target_include_directories(${PROJECT_NAME} PRIVATE ${MATPLOTLIB_CPP_DIR})
     target_link_libraries(${PROJECT_NAME} PRIVATE ${Python3_LIBRARIES})
