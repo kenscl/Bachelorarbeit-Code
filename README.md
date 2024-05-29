@@ -1,14 +1,13 @@
 # Bachelorarbeit-Code
 This is the Python-Code for my Bachelors Thesis.
 
-# Python Code
-The Python Code is located in `python\`
-## Running the code
-1. Initialize the virtual environment:
+# General-Setup
 ```
-cd python
-python3 -m venv .venv 
-source .venv/bin/activate
-pip install -r requirements.txt
+git clone --recurse-submodules  https://github.com/kenscl/Bachelorarbeit-Code.git sun-sensor
+cd sun-sensor
+python3 -m venv python/.venv 
+source python/.venv/bin/activate
+pip install -r python/requirements.txt
+cmake -S sun-sensor-simulator/ -B sun-sensor-simulator/build
+cmake --build sun-sensor-simulator/build
 ```
-2. Running the selected script

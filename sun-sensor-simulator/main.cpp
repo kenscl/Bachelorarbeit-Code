@@ -15,7 +15,7 @@ int main () {
     std::vector<double> x;
     std::vector<double> ref;
     Sun_Sensor ss;
-    for (double i = - 60 * D2R; i < 60 * D2R; i += 0.1 * D2R) {
+    for (double i = - 60 * D2R; i < 60 * D2R; i += 1 * D2R) {
         res_v3.push_back(ss.generate_response_v3(i, i).x );
         printf("%f %f \n", i, ss.generate_response_v3(i, i).x);
         ref.push_back(i);
