@@ -18,11 +18,11 @@ Matrix<double> Sin_Fit::Jacobian(int64_t degree, const std::vector<double>& gt_d
     return jacobian;
 }
 
-Sin_Fit::Sin_Fit(int64_t degree, int64_t steps, std::vector<double> gt_data, std::vector<double> measurement) {
+Sin_Fit::Sin_Fit(int64_t degree, int64_t max_steps, double bound, std::vector<double> gt_data, std::vector<double> measurement) {
     this->degree = degree;
 
     double ak = .1;
-    double bk = 0;
+    double bk = .00001;
     Vector<double> params = Vector<double>((int) 2 * degree);
     this->parameters = params;
     for (int i = 0; i < params.size; i++) {
@@ -36,14 +36,15 @@ Sin_Fit::Sin_Fit(int64_t degree, int64_t steps, std::vector<double> gt_data, std
      * 3. S = sum r^2
      */
 
-    //for (int i = 0; i < steps; i++) {
-    double S = 100;
-    while (S > 1e-3) {
-    //this->parameters.print();
+    double S = MAXFLOAT;
+    int steps = 0;
+    while (S > bound) {
+        // end regression if to many steps are done
+        if (steps > max_steps) break;
         // calculating the residuals
         Vector<double> residuals(measurement.size());
         for (uint j = 0; j < measurement.size(); j++) {
-            residuals.data.at(j) = measurement.at(j) - this->at(gt_data.at(j));
+            residuals.data.at(j) = measurement.at(j) - this->sf_at(gt_data.at(j));
         }
 
         // calculating S
@@ -64,35 +65,76 @@ Sin_Fit::Sin_Fit(int64_t degree, int64_t steps, std::vector<double> gt_data, std
         Vector<double> delta_params = inv * jacobian.transpose() * residuals * ak;
         this->parameters = this->parameters + delta_params;
         double S_new = 0;
+
         for (uint j = 0; j < measurement.size(); j++) {
-            double new_residual = measurement.at(j) - this->at(gt_data.at(j));
+            double new_residual = measurement.at(j) - this->sf_at(gt_data.at(j));
             S_new += new_residual * new_residual;
         }
 
         if (S_new < S) {
-            bk /= 10; // Reduce damping factor
+            bk /= 10; 
         } else {
-            bk *= 10; // Increase damping factor
+            bk *= 10; 
         }
-        printf("%f \n", S);
+
+        // end regression if no notable improvement happens
+        double delta_s = abs(S_new - S);
+        if (delta_s < bound / 10) break;
+
+        ++steps; 
     }
+    printf("residual at end: %f after %d steps \n", S, steps);
 
 }
 
-double Sin_Fit::at(double x) {
+double Sin_Fit::sf_at(double x) {
     double sum = 0;
     for (int k = 0; k < this->degree; ++k) {
-        double amp_param = this->parameters.data.at(2 * k);
-        double freq_param = this->parameters.data.at(2 * k + 1);
-        sum += amp_param * sin(freq_param * x);
+        double b0 = this->parameters.data.at(2 * k);
+        double b1 = this->parameters.data.at(2 * k + 1);
+        sum += b0 * sin(b1 * x);
     }
     return sum;
 }
 
-std::vector<double> Sin_Fit::calc(std::vector<double> x) {
+
+double Sin_Fit::sf_at_derivative(double x) {
+    double sum = 0;
+    for (int k = 0; k < this->degree; ++k) {
+        double b0 = this->parameters.data.at(2 * k);
+        double b1 = this->parameters.data.at(2 * k + 1);
+        sum += b0 * b1 * cos(b1 * x);
+    }
+    return sum;
+}
+std::vector<double> Sin_Fit::sf_calc(std::vector<double> x) {
     std::vector<double> ret;
     for (uint i = 0; i < x.size(); i++) {
-        ret.push_back(this->at(x.at(i)));
+        ret.push_back(this->sf_at(x.at(i)));
+    }
+    return ret;
+}
+double Sin_Fit::at(double x, double bound) {
+    double delta = MAXFLOAT;
+    double last_x = x;
+
+    //for (int i = 0; i < 5; i++ ){
+    while (delta > bound) {
+        double f = this->sf_at(last_x);
+        double df = this->sf_at_derivative(last_x);
+        double new_x;
+        new_x = last_x - (f - x) / df;
+        delta = abs(new_x - last_x);
+        last_x = new_x;
+    }
+    
+    return last_x;
+}
+
+std::vector<double> Sin_Fit::calc(std::vector<double> x, double bound) {
+    std::vector<double> ret;
+    for (uint i = 0; i < x.size(); i++) {
+        ret.push_back(this->at(x.at(i), bound));
     }
     return ret;
 }

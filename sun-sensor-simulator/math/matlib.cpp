@@ -1,5 +1,6 @@
 #include "matlib.h"
 #include <cstdio>
+#include <stdexcept>
 
 Vector_3D::Vector_3D() {
     this->x = 0;
@@ -308,4 +309,17 @@ double linear_interpolation(double * x, double * y, double value, int len){
         if (x[i] <= value && x[i+1] >= value) return lerp(y[i], y[i+1], x[i], x[i + 1], value);
     }
     return y[len];
+}
+
+double rmse(std::vector<double> u, std::vector<double> v) {
+    if (u.size() != v.size()) {
+        throw std::logic_error("Datasets must be the same size to calculate rmse");
+    }
+    double rmse = 0;
+    for (int i = 0; i < u.size(); ++i){
+        double delta = u.at(i) - v.at(i);
+        rmse += delta * delta;
+    }
+    rmse = sqrt (rmse / u.size());
+    return rmse;
 }

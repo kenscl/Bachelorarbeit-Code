@@ -11,6 +11,9 @@
 # define PLANCK_CONSTANT    6.62607015e-34
 # define BOLTZMANN_CONSTANT 1.380649e-23
 
+#define R2D     180 / M_PI
+#define D2R     M_PI / 180
+
 class Vector_3D;
 class Matrix_3D;
 template <typename T>
@@ -69,6 +72,7 @@ class Vector {
 
 double lerp(double lly, double lry, double llx, double lrx, double x);
 double linear_interpolation(double * x, double * y, double value, int len);
+double rmse(std::vector<double> u, std::vector<double> v);
 
 template class Vector<double>;
 #endif

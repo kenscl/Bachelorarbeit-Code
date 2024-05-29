@@ -5,31 +5,9 @@
 #include "sin_fit/sin_fit.h"
 #include "matplotlibcpp.h"
 
-#define R2D     180 / M_PI
-#define D2R     M_PI / 180
 
 namespace plt = matplotlibcpp;
 int main () {
-    //Matrix<double> A(3,3);
-    //A.data[0][0] = 1;
-    //A.data[0][1] = 2;
-    //A.data[0][2] = 2;
-
-    //A.data[1][0] = 2;
-    //A.data[1][1] = 2;
-    //A.data[1][2] = 2;
-
-    //A.data[2][0] = 5;
-    //A.data[2][1] = 2;
-    //A.data[2][2] = 4;
-
-    //Matrix<double> Q, R;
-    //A.QR_decomp(A, Q, R);
-    //A.print();
-    //Q.print();
-    //R.print();
-    //(Q * R).print();
-    //A.moore_penrose().print();
     std::vector<double> res_v1;
     std::vector<double> res_v2;
     std::vector<double> res_v3;
@@ -43,18 +21,23 @@ int main () {
         x.push_back(i);
     }
 
-    std::vector<double> pf_res;
     std::vector<double> pf_cor;
-    //Polynomial_Fit pf(7, ref, res_v3);
-    //pf_cor = pf.calc(res_v3);
-    Sin_Fit sf(1, 5000, x, res_v3);
-    pf_cor = sf.calc(res_v3);
-    pf_res = sf.calc(ref);
-    sf.parameters.print();
+    std::vector<double> sf_cor;
+    Polynomial_Fit pf(7, ref, res_v3);
+    pf_cor = pf.calc(res_v3);
+    Sin_Fit sf(3, 5000, 1e-6, ref, res_v3);
+    sf_cor = sf.calc(res_v3, 1e-3);
+    
+    for ( int i = 0; i < pf_cor.size(); ++i) {
+        printf("%f %f \n", pf_cor.at(i), ref.at(i));
+    }
 
-    //plt::named_plot("gt", x, ref);
-    plt::named_plot("polfit", x, pf_res);
-    plt::named_plot("polfit_cor", x, pf_cor);
+    printf("Polyfit rmse: %f \n", rmse(pf_cor, ref));
+    printf("Sinfit rmse: %f \n", rmse(sf_cor, ref));
+
+    plt::named_plot("gt", x, ref);
+    plt::named_plot("polynomial fit", x, pf_cor);
+    plt::named_plot("sin fit", x, sf_cor);
     //plt::named_plot("1. sin (x) term", x, res_v1);
     //plt::named_plot("3. sine (x) terms", x, res_v2);
     plt::named_plot("6. sine (x) terms", x, res_v3);

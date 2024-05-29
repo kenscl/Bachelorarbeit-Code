@@ -97,8 +97,8 @@ def linear_interpolation(x: float, noise: list, correction_data: list, gt_data):
 
 
 order = 7
-data_pre, noise_pre = read_data("../sun-sensor-simulator/build/res.txt")
-#data_pre, noise_pre = generate_data_array_with_errors(55, -55, 11000, 0.1)
+#data_pre, noise_pre = read_data("../sun-sensor-simulator/build/res.txt")
+data_pre, noise_pre = generate_data_array_with_errors(55, -55, 11000, 0.1)
 data = data_pre[::2]
 data_test_values = data_pre[1::2]
 noise = noise_pre[::2]
@@ -107,10 +107,8 @@ noise_test_values = noise_pre[1::2]
 weights = polynomial_regression(order, data, noise)
 polynomial = np.poly1d(weights)
 
-#
+
 correction_data = generate_correcton_data_linear_interpolation(data, noise)
-#
-#
 
 x_values = np.linspace(-60, 60, 1000)
 y_pol = polynomial(x_values)

@@ -31,7 +31,7 @@ Vector_3D Sun_Sensor::generate_response_v2(double angle_x, double angle_y) {
 Vector_3D Sun_Sensor::generate_response_v3(double angle_x, double angle_y) {
     double response_x, response_y;
     Vector_3D result;
-    response_x = 0.3 * sin (3./2 * angle_x);
+    response_x = 0.3 * sin (3./2 * angle_x) - 0.01 * sin(10 * angle_x) + 0.001 * sin (60 * angle_x);
     response_y = 0.315 * sin (M_PI / (2 * 60) * angle_y) 
             + 0.002 * angle_y * sin(M_PI / 50 * angle_y) * sin(M_PI / 50 * angle_y)
             + 0.01 * sin (M_PI / (20) * angle_y) * sin (M_PI / (20) * angle_y) * sin (M_PI / (20) * angle_y);
