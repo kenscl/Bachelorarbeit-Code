@@ -118,8 +118,8 @@ double Sin_Fit::at(double x, double bound) {
     double delta = MAXFLOAT;
     double last_x = x;
 
-    //for (int i = 0; i < 5; i++ ){
-    while (delta > bound) {
+    for (int i = 0; i < 5; i++ ){
+    //while (delta > bound) {
         double f = this->sf_at(last_x);
         double df = this->sf_at_derivative(last_x);
         double new_x;
