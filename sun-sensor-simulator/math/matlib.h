@@ -5,6 +5,8 @@
 
 // Math includes:
 #include "matrix.h"
+#include "quaternion.h"
+
 // constants
 # define PI                 3.14159265359
 # define C                  299792458.0

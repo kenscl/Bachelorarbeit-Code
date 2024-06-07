@@ -41,6 +41,13 @@ set(SOURCES
     main.cpp
 )
 
+
+set(ALIGNMENT
+    alignment/main.cpp
+    alignment/sat_model.h
+    alignment/sat_model.cpp
+)
+
 if(NOT DEFINED ENV{GITHUB_ACTIONS})
     set(MATPLOTLIB_CPP_DIR "matplotlib-cpp/")
 
@@ -53,6 +60,9 @@ if(NOT DEFINED ENV{GITHUB_ACTIONS})
 
     target_include_directories(${PROJECT_NAME} PRIVATE ${MATPLOTLIB_CPP_DIR})
     target_link_libraries(${PROJECT_NAME} PRIVATE ${Python3_LIBRARIES})
+
+
+    add_executable(alignment ${ALIGNMENT} ${MATH})
 endif()
 
 # Test executable without matplotlib-cpp and Python3
