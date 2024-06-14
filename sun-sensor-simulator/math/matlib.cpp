@@ -293,6 +293,21 @@ Vector<T>& Vector<T>::operator=(const Vector<T>& other) {
     return *this;
 }
 
+template<typename T>
+double Vector<T>::calculate_angle(Vector<T> other) const {
+    if (this->size != other.size){
+        throw std::logic_error("Vectors not of same length");
+    }
+    double ac;
+    Vector<T> v1, v2;
+    v1 = this->normalize();
+    v2 = other.normalize();
+    double res;
+    res = v1 * v2;
+    ac = acos (res);
+    return ac;
+}
+
 double lerp(double lly, double lry, double llx, double lrx, double x) {
     double distance = abs (lrx - llx);
     if (distance == 0) {

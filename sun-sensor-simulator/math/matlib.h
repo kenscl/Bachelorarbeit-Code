@@ -59,6 +59,7 @@ class Vector {
         Vector() : size(0) {}
 
         int get_size() const;
+        double calculate_angle(Vector<T> other) const;
         void print() const;
         T norm() const;
         Vector<T> normalize() const;

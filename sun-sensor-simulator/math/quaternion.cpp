@@ -1,4 +1,8 @@
 #include "quaternion.h"
+#include "matlib.h"
+
+template <typename T>
+class Vector;
 
 template <typename T>
 Quaternion<T>::Quaternion() {
@@ -17,7 +21,7 @@ Quaternion<T>::Quaternion(T q, T i, T j, T k) {
 }
 
 template <typename T>
-Quaternion<T>::Quaternion(T angle, Vector<T> axis) {
+Quaternion<T>::Quaternion(T angle, const Vector<T>& axis) {
     this->q = cos(angle / 2);
     this->i = axis.data.at(0) * sin(angle / 2);
     this->j = axis.data.at(1) * sin(angle / 2);
@@ -27,11 +31,11 @@ Quaternion<T>::Quaternion(T angle, Vector<T> axis) {
 template <typename T>
 Quaternion<T> Quaternion<T>::operator*(const Quaternion<T>& other) const {
     return Quaternion<T>(
-            q * other.q - i * other.i - j * other.j - k * other.k,
-            q * other.i + i * other.q + j * other.k - k * other.j,
-            q * other.j + j * other.q + k * other.i - i * other.k,
-            q * other.k + k * other.q + i * other.j - j * other.i
-            );
+        q * other.q - i * other.i - j * other.j - k * other.k,  
+        q * other.i + i * other.q + j * other.k - k * other.j,  
+        q * other.j - i * other.k + j * other.q + k * other.i,  
+        q * other.k + i * other.j - j * other.i + k * other.q   
+    );
 }
 
 template <typename T>
@@ -48,4 +52,13 @@ Quaternion<T>& Quaternion<T>::operator=(const Quaternion<T>& other) {
         this->k = other.k;
     }
     return *this;
+}
+
+template <typename T>
+void Quaternion<T>::print() const {
+    printf("quaternion: \n");
+    printf("q %.5f \n", this->q);
+    printf("i %.5f \n", this->i);
+    printf("j %.5f \n", this->j);
+    printf("k %.5f \n", this->k);
 }

@@ -11,7 +11,7 @@ class Sat_Model {
         Matrix<double> dcm_SB_gyro;
         std::vector<Matrix<double>> dcm_SB_ss;
 
-        double angle_x;
+        double angle_z;
         double angle_y;
 
     public: 
@@ -19,5 +19,5 @@ class Sat_Model {
         std::vector<Vector<double>> get_sun_vectors();
         Vector<double> get_mag_vector();
         Vector<double> get_gyro_vector();
-        void set_vector_delta(double angle_x, double angle_y);
+        void set_vector_delta(double angle_z, double angle_y);
 };

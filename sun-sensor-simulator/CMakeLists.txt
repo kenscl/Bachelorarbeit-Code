@@ -4,21 +4,13 @@ project(sun-sensor-simulator CXX)
 add_compile_options(-Wall)
 set(CMAKE_CXX_STANDARD 11)
 
-# Add GoogleTest
-include(FetchContent)
-FetchContent_Declare(
-  googletest
-  URL https://github.com/google/googletest/archive/refs/tags/release-1.11.0.zip
-)
-# For Windows: Prevent overriding the parent project's compiler/linker settings
-set(gtest_force_shared_crt ON CACHE BOOL "" FORCE)
-FetchContent_MakeAvailable(googletest)
-
 set(MATH
     math/matlib.h
     math/matlib.cpp
     math/matrix.h
     math/matrix.cpp
+    math/quaternion.h
+    math/quaternion.cpp
 )
 
 set(POLFIT
@@ -36,6 +28,7 @@ set(SINFIT
 )
 
 set(SOURCES 
+    sun_sensor_data_parser.h
     sun_sensor.h
     sun_sensor.cpp
     main.cpp
@@ -64,13 +57,4 @@ if(NOT DEFINED ENV{GITHUB_ACTIONS})
 
     add_executable(alignment ${ALIGNMENT} ${MATH})
 endif()
-
-# Test executable without matplotlib-cpp and Python3
-enable_testing()
-
-add_executable(all_tests test/test_matrix.cpp ${MATH})
-target_link_libraries(all_tests gtest gtest_main)
-
-# Add tests
-add_test(NAME MatrixTest COMMAND all_tests)
 

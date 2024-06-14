@@ -4,24 +4,19 @@
 #include "polynomial_fit/polynomial_fit.h"
 #include "sin_fit/sin_fit.h"
 #include "lut/lut.h"
+#include "sun_sensor_data_parser.h"
 #include "matplotlibcpp.h"
 
 
 namespace plt = matplotlibcpp;
+
 int main () {
-    std::vector<double> res_v1;
-    std::vector<double> res_v2;
-    std::vector<double> res_v3;
-    std::vector<double> x;
-    std::vector<double> ref;
-    Sun_Sensor ss;
-    for (double i = - 60 * D2R; i < 60 * D2R; i += 1 * D2R) {
-        res_v3.push_back(ss.generate_response_v3(i, i).x / 0.00631);
-        res_v2.push_back(ss.generate_response_v2(i, i).x / 0.00631);
-        res_v1.push_back(ss.generate_response_v1(i, i).x / 0.00631);
-        ref.push_back(i);
-        x.push_back(i * R2D);
-    }
+
+    std::vector<std::vector<double>> data;
+    data = parse_csv("../Sunsensor_Data/28.08.2021 17.20.54 ADPD2140_X.txt");
+    std::vector<double> stage_angle = data.at(0);
+    std::vector<double> X = data.at(1);
+    std::vector<double> Y = data.at(2);
 
     //std::vector<double> pf_cor;
     //std::vector<double> sf_cor;
@@ -44,16 +39,15 @@ int main () {
     //printf("Sinfit rmse: %f \n", rmse(sf_cor, ref));
     //printf("LUT rmse: %f \n", rmse(lut_cor, ref));
 
-    plt::named_plot("gt", x, x);
+    plt::named_plot("gt", stage_angle, stage_angle);
+    plt::named_plot("X", stage_angle, X);
+    plt::named_plot("Y", stage_angle, Y);
     //plt::named_plot("polynomial fit", x, pf_cor);
     //plt::named_plot("sin fit", x, sf_cor);
     //plt::named_plot("LUT", x, lut_cor);
-    plt::named_plot("1", x, res_v1);
-    plt::named_plot("2", x, res_v2);
-    plt::named_plot("3", x, res_v3);
     plt::legend();
-    plt::xlabel("INCIDENT LIGHT ANGLE (Degrees)");
-    plt::ylabel("ANGULAR RESPONSE (Ratio)");
+    plt::xlabel("INCIDENT LIGHT ANGLE (RAD)");
+    plt::ylabel("ANGULAR RESPONSE (RAD)");
     plt::show();
 
 }
