@@ -11,3 +11,11 @@ pip install -r python/requirements.txt
 cmake -S sun-sensor-simulator/ -B sun-sensor-simulator/build
 cmake --build sun-sensor-simulator/build
 ```
+
+# Error handling 
+You might encounter issues with matplotlib-cpp.
+If this occurs make sure gtk and python gtk are correctly installed.
+On arch:
+```
+sudo pacman -S gtk4 python-gobject
+```

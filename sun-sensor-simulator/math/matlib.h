@@ -77,6 +77,10 @@ double lerp(double lly, double lry, double llx, double lrx, double x);
 double linear_interpolation(double * x, double * y, double value, int len);
 double rmse(std::vector<double> u, std::vector<double> v);
 
+inline double sign(double x) {
+    if (x < 0) return -1;
+    return 1;
+}
 template class Vector<double>;
 #endif
 

@@ -25,6 +25,10 @@ set(LUT
 set(SINFIT
     sin_fit/sin_fit.h
     sin_fit/sin_fit.cpp
+    sin_fit/extended_sin_fit.h
+    sin_fit/extended_sin_fit.cpp
+    sin_fit/extended_sin_fit_alt.h
+    sin_fit/extended_sin_fit_alt.cpp
 )
 
 set(SOURCES 
