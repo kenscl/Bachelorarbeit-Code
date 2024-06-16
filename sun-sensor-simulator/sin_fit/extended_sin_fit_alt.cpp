@@ -15,13 +15,13 @@ Matrix<double> Alt_sin_fit::Jacobian(const std::vector<double> &gt_data) {
         jacobian.data.at(j).at(0) = sin(a2 * x); // dR/d(a1)
         jacobian.data.at(j).at(1) = a1 * x * cos(a2 * x); // dR/d(a2)
 
-        jacobian.data.at(j).at(2) = sign(x) * pow(abs(x), b2) * sin(b3 * pow(abs(x), b4)); // dR/d(b2)
+        jacobian.data.at(j).at(2) = sign(x) * pow(abs(x), b2) * sin(b3 * pow(abs(x), b4)); // dR/d(b1)
 
         jacobian.data.at(j).at(3) = b1 * sign(x) * b2 * pow(abs(x), b2) / x
-            * sin(b3 * pow(abs(x), b4)); // dR/d(b3)
+            * sin(b3 * pow(abs(x), b4)); // dR/d(b2)
 
         jacobian.data.at(j).at(4) = b1 * sign(x) * pow(abs(x), b2) 
-            * pow(abs(x), b4) * cos(b3 * pow(abs(x), b4)); // dR/d(b4)
+            * pow(abs(x), b4) * cos(b3 * pow(abs(x), b4)); // dR/d(b3)
 
         jacobian.data.at(j).at(5) = b1 * sign(x) * pow(abs(x), b2) 
             * b3 * b4 * pow(abs(x), b4) / x  * cos(b3 * pow(abs(x), b4)); // dR/d(b4) 
@@ -31,7 +31,7 @@ Matrix<double> Alt_sin_fit::Jacobian(const std::vector<double> &gt_data) {
 }
 Alt_sin_fit::Alt_sin_fit(int64_t max_steps, double bound, std::vector<double> gt_data, std::vector<double> measurement) {
     double ak = .1;
-    double bk = .00001;
+    double bk = .000001;
     Vector<double> params = Vector<double>(6);
     for (int i = 0; i < params.size; i++) {
         params.data.at(i) = 1;

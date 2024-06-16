@@ -16,10 +16,10 @@ namespace plt = matplotlibcpp;
 int main () {
 
     std::vector<std::vector<double>> data;
-    data = parse_csv("../../Sunsensor_Data/28.08.2021 16.37.25 ADPD2140_Y.txt");
+    data = parse_csv("../../Sunsensor_Data/28.08.2021 17.20.54 ADPD2140_X.txt");
     std::vector<double> stage_angle = data.at(0);
-    std::vector<double> Y = data.at(1);
-    std::vector<double> X = data.at(2);
+    std::vector<double> X = data.at(1);
+    std::vector<double> Y = data.at(2);
 
     std::vector<double> pf_cor;
     std::vector<double> sf_cor;
@@ -54,10 +54,10 @@ int main () {
     plt::named_plot("X", stage_angle, X);
     plt::named_plot("Y", stage_angle, Y);
     //plt::named_plot("polynomial fit", stage_angle, pf_cor);
-    plt::named_plot("sin fit", stage_angle, sf_cor);
-    plt::named_plot("extended sin fit", stage_angle, ef_cor);
-    plt::named_plot("extended sin fit alt", stage_angle, ef_alt_cor);
-    //plt::named_plot("LUT", stage_angle, lut_cor);
+    //plt::named_plot("sin fit", stage_angle, sf_cor);
+    //plt::named_plot("extended sin fit", stage_angle, ef_cor);
+    //plt::named_plot("extended sin fit alt", stage_angle, ef_alt_cor);
+    plt::named_plot("LUT", stage_angle, lut_cor);
     plt::legend();
     plt::xlabel("INCIDENT LIGHT ANGLE (RAD)");
     plt::ylabel("ANGULAR RESPONSE (RAD)");

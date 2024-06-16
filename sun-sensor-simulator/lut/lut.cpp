@@ -1,4 +1,5 @@
 #include "lut.h"
+#include <cstdio>
 
 LUT::LUT(std::vector<double> gt_data, std::vector<double> measurement) {
     if (gt_data.size() != measurement.size()) {
@@ -7,9 +8,11 @@ LUT::LUT(std::vector<double> gt_data, std::vector<double> measurement) {
     std::vector<double> correction_data;
     for (int i = 0; i < gt_data.size(); ++i) {
         correction_data.push_back(gt_data.at(i) - measurement.at(i));
+        printf("gt: %f, measurement: %f, correction: %f \n", gt_data.at(i), measurement.at(i), correction_data.at(i));
     }
     this->parameters = correction_data;
     this->measurement = measurement;
+    printf("number of stored points: %zu with %lu bytes\n", this->parameters.size(), this->parameters.size() * sizeof(double));
 }
 
 double LUT::at(double x) {
@@ -23,14 +26,16 @@ double LUT::at(double x) {
        } 
        if (this->measurement.at(i) >= x) {
             right = i;
-            break; // We found the right index, so break the loop
+            break; 
        }
     }
 
     double d = this->measurement.at(right) - this->measurement.at(left);
-    if (d == 0 ) return x + this->parameters.at(left);
-    double value = this->parameters.at(left) * (this->measurement.at(right) - x) / d 
-                 + this->parameters.at(right) * (x - this->measurement.at(left)) / d;
+    if (d == 0 ) {
+        return x + this->parameters.at(left);
+    }
+    // linear interpolation 
+    double value = this->parameters.at(left) + (x - this->measurement.at(left)) * (this->parameters.at(right) - this->parameters.at(left)) / d;
     return value;
 }
 
