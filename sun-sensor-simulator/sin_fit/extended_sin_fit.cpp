@@ -78,7 +78,9 @@ Extended_sin_fit::Extended_sin_fit(int64_t max_steps, double bound, std::vector<
 
         // end regression if no notable improvement happens
         double delta_s = abs(S_new - S);
-        if (delta_s < bound / 10) break;
+        if (delta_s < bound / 10) {
+            break;
+        };
 
         ++steps; 
     }

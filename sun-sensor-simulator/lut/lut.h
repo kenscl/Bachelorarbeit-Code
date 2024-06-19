@@ -17,7 +17,7 @@ class LUT {
          * This function generates a look up table from the data points and then
          * returns the corrected data through linear interpolation
          */
-        LUT(std::vector<double> gt_data, std::vector<double> measurement);
+        LUT(std::vector<double> gt_data, std::vector<double> measurement, int num_points);
         /*
          * evaluate the lut at x throuth linear interpolation
          */

@@ -21,6 +21,8 @@ set(POLFIT
 set(LUT
     lut/lut.h
     lut/lut.cpp
+    lut/c-spline.h
+    lut/c-spline.cpp
 )
 set(SINFIT
     sin_fit/sin_fit.h
