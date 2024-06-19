@@ -50,10 +50,7 @@ int main () {
 
     Extended_sin_fit ef(5000, 1e-6, stage_angle, X);
     ef_cor = ef.calc(X, 1e-3);
-    Extended_sin_fit ef2(50, 1e-6, stage_angle, ef_cor);
-    std::vector<double> ef2_cor = ef2.calc(ef_cor, 1e-3);
     printf("esf parameters: %f %f %f %f %f \n", ef.parameters.data.at(0), ef.parameters.data.at(1), ef.parameters.data.at(2), ef.parameters.data.at(3), ef.parameters.data.at(4));
-    printf("esf2 parameters: %f %f %f %f %f \n", ef2.parameters.data.at(0), ef2.parameters.data.at(1), ef2.parameters.data.at(2), ef2.parameters.data.at(3), ef2.parameters.data.at(4));
 
     Alt_sin_fit ef_alt(5000, 1e-6, stage_angle, X);
     ef_alt_cor = ef_alt.calc(X, 1e-3);
@@ -62,10 +59,18 @@ int main () {
     LUT lut(stage_angle, X, 100);
     lut_cor = lut.calc(X);
 
-    CSpline cs(stage_angle, X, 5);
+    CSpline cs(stage_angle, X, 50);
 
-    std::vector<double> spline;
+    std::vector<double> spline, spline_error, spline_coeffs_x;
     spline = cs.calc(X);
+
+    for (int i = 0; i < stage_angle.size(); i++) {
+        spline_error.push_back(cs.get_value(stage_angle.at(i)));
+    }
+    for (int i = 0; i < cs.coefficients.size(); i++) {
+        spline_coeffs_x.push_back(cs.coefficients.at(i).at(0));
+        //printf("cs.y: %f \n", cs.y.at(i));
+    }
 
     printf("Polyfit rmse: %f \n", rmse(pf_cor, stage_angle));
     printf("Sinfit rmse: %f \n", rmse(sf_cor, stage_angle));
@@ -81,13 +86,12 @@ int main () {
 
     plt::named_plot("gt", stage_angle, stage_angle);
     plt::named_plot("X", stage_angle, X);
-    plt::named_plot("Y", stage_angle, Y);
+    //plt::named_plot("Y", stage_angle, Y);
     plt::named_plot("polynomial fit", stage_angle, pf_cor);
     plt::named_plot("sin fit", stage_angle, sf_cor);
     plt::named_plot("extended sin fit", stage_angle, ef_cor);
-    plt::named_plot("extended sin fit 2", stage_angle, ef2_cor);
     plt::named_plot("error", stage_angle, error);
-    plt::named_plot("extended sin fit alt", stage_angle, ef_alt_cor);
+    //plt::named_plot("extended sin fit alt", stage_angle, ef_alt_cor);
     plt::scatter( stage_angle, lut_cor);
 
 

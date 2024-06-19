@@ -5,6 +5,7 @@
 class CSpline {
 public:
     std::vector<std::vector<double>> coefficients; 
+    std::vector<double> y;
 
 public:
     /*
@@ -30,6 +31,8 @@ public:
 
     double at(double x);
     std::vector<double> calc(std::vector<double> x);
+
+    void thomas_algorithm(const Matrix<double>& A, const Vector<double>& b, Vector<double>& c);
 
 
 };

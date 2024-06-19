@@ -8,7 +8,7 @@ CSpline::CSpline(std::vector<double> gt_data, std::vector<double> measurement, i
     for (int i = 0; i < gt_data.size(); ++i) {
         if (i % int (measurement.size() / (num_points-1)) == 0) {
             y.push_back(gt_data.at(i) - measurement.at(i));
-            x.push_back(gt_data.at(i));
+            x.push_back(measurement.at(i));
         }
     }
     this->coefficients = generate_coefficients(x, y);
@@ -40,24 +40,7 @@ std::vector<std::vector<double>> CSpline::generate_coefficients(std::vector<doub
         b.data[i] = 3 / h.at(i) * (y.at(i+1) - y.at(i)) - 3 / h.at(i-1) * (y.at(i) - y.at(i-1));
     }
 
-    // Thomas algorithm for solving A * c = b
-    Vector<double> c_prime(x.size()), d_prime(x.size());
-    d_prime.data[0] = b.data[0];
-    c_prime.data[0] = A.data[0][1] / A.data[0][0];
-    for (uint i = 1; i < b.size ; ++i) {
-        c_prime.data[i] = A.data[i][i+1]/ (A.data[i][i] - b.data[i-1] * A.data[i][i-1]);
-    }
-    d_prime.data[0] = b.data[0] / A.data[0][0];
-    for (uint i = 1; i < b.size ; ++i) {
-        d_prime.data[i] = (b.data[i] - d_prime.data[i-1] * A.data[i][i-1]) / (A.data[i][i] - c_prime.data[i-1] * A.data[i][i-1]);
-    }
-
-    Vector<double> c(x.size());
-    c.data[c.size - 1] = 0;
-    for (int i = c.size - 2; i >= 0; --i) {
-        c.data[i] = d_prime.data[i] - c_prime.data[i] * c.data[i+1];
-    }
-
+    Vector<double> c = A.inverse() * b;
     // generate coefficients
     Vector<double> a(x.size()), b_vec(x.size()), d(x.size());
     for (int i = 0; i < x.size(); ++i) {
