@@ -32,8 +32,5 @@ public:
     double at(double x);
     std::vector<double> calc(std::vector<double> x);
 
-    void thomas_algorithm(const Matrix<double>& A, const Vector<double>& b, Vector<double>& c);
-
-
 };
 #endif // __C_SPLINE

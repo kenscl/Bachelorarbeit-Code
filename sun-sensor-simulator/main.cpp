@@ -59,7 +59,7 @@ int main () {
     LUT lut(stage_angle, X, 100);
     lut_cor = lut.calc(X);
 
-    CSpline cs(stage_angle, X, 50);
+    CSpline cs(stage_angle, X, 30);
 
     std::vector<double> spline, spline_error, spline_coeffs_x;
     spline = cs.calc(X);
@@ -90,7 +90,7 @@ int main () {
     plt::named_plot("polynomial fit", stage_angle, pf_cor);
     plt::named_plot("sin fit", stage_angle, sf_cor);
     plt::named_plot("extended sin fit", stage_angle, ef_cor);
-    plt::named_plot("error", stage_angle, error);
+    plt::named_plot("error", X, error);
     //plt::named_plot("extended sin fit alt", stage_angle, ef_alt_cor);
     plt::scatter( stage_angle, lut_cor);
 
