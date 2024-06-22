@@ -12,6 +12,7 @@ inline std::vector<std::vector<double>> parse_csv(const char* file) {
     std::vector<double> Y;
     std::fstream data(file);
     if (!data.is_open()) {
+        printf("Could not open file %s\n", file);
         return {};
     }
 

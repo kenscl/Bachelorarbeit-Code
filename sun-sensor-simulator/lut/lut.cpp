@@ -8,41 +8,28 @@ LUT::LUT(std::vector<double> gt_data, std::vector<double> measurement, int num_p
     std::vector<double> correction_data;
     std::vector<double> meas;
     for (int i = 0; i < gt_data.size(); ++i) {
-        if (i % int (measurement.size() / (num_points-1)) == 0) {
             correction_data.push_back(gt_data.at(i) - measurement.at(i));
-            meas.push_back(measurement.at(i));
-        }
     }
+    correction_data = select_evenly_spaced_points(correction_data, num_points);
+    meas = select_evenly_spaced_points(measurement, num_points);
     this->parameters = correction_data;
     this->measurement = meas;
-    printf("number of stored points: %zu with %lu bytes\n", this->parameters.size(), this->parameters.size() * sizeof(double));
+    //printf("number of stored points: %zu with %lu bytes\n", this->parameters.size(), this->parameters.size() * sizeof(double));
 }
 
 double LUT::at(double x) {
-    int left = 0;
-    int right = this->measurement.size() - 1;
-    double largest_left = -100;
-    double smalles_right= 100;
-
-    // Finding the left and right indices
-    for (int i = 0; i < this->measurement.size(); ++i) {
-       if (this->measurement.at(i) <= x && this->measurement.at(i) > largest_left) {
-            left = i;
-       } 
-       if (this->measurement.at(i) >= x && this->measurement.at(i) < smalles_right) {
-            right = i;
-            break; 
-       }
+    if (x < this->measurement.at(0)) {
+        return x + this->parameters.at(0);
     }
-
-    double d = this->measurement.at(right) - this->measurement.at(left);
-    if (d == 0 ) {
-        return x + this->parameters.at(left);
+    for (int i = 0; i < this->measurement.size() - 1; ++i) {
+        if (x >= this->measurement.at(i) && x < this->measurement.at(i+1)) {
+            double d = this->measurement.at(i + 1) - this->measurement.at(i);
+            double weigth_left = this->parameters.at(i) * (this->measurement.at(i + 1) - x) / d; 
+            double weigth_right = this->parameters.at(i + 1) * ((x - this->measurement.at(i)) / d);
+            return x + weigth_left + weigth_right;
+        }
     }
-    // linear interpolation 
-    double correction = this->parameters.at(right) * abs(x - this->measurement.at(right)) / d + this->parameters.at(left) * abs(this->measurement.at(left) - x) / d;
-    double value = x + correction;
-    return value;
+    return x + this->parameters.at(this->parameters.size() - 1);
 }
 
 std::vector<double> LUT::calc(std::vector<double> x) {

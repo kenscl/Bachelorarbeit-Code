@@ -3,14 +3,26 @@
 #include <vector>
 
 CSpline::CSpline(std::vector<double> gt_data, std::vector<double> measurement, int num_points) {
-    std::vector<double> x, y;
+    std::vector<double> x, y, mid_x, mid_y;
 
+
+    y.push_back(gt_data.at(0) - measurement.at(0));
+    x.push_back(measurement.at(0));
     for (int i = 0; i < gt_data.size(); ++i) {
-        if (i % int (measurement.size() / (num_points-1)) == 0) {
-            y.push_back(gt_data.at(i) - measurement.at(i));
-            x.push_back(measurement.at(i));
+        if (gt_data.at(i) < - 49 * D2R || gt_data.at(i) > 47 * D2R){
+            continue;
+        }
+        if (i % int (measurement.size() / (num_points-3)) == 0) {
+            mid_y.push_back(gt_data.at(i) - measurement.at(i));
+            mid_x.push_back(measurement.at(i));
         }
     }
+    x.insert(x.end(), mid_x.begin(), mid_x.end());
+    y.insert(y.end(), mid_y.begin(), mid_y.end());
+    y.push_back(gt_data.at(gt_data.size() - 1) - measurement.at(gt_data.size() - 1));
+    x.push_back(measurement.at(gt_data.size() - 1));
+
+
     this->coefficients = generate_coefficients(x, y);
 }
 

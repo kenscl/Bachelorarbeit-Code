@@ -98,7 +98,7 @@ def linear_interpolation(x: float, noise: list, correction_data: list, gt_data):
 
 order = 7
 #data_pre, noise_pre = read_data("../sun-sensor-simulator/build/res.txt")
-data_pre, noise_pre = generate_data_array_with_errors(55, -55, 11000, 0.1)
+data_pre, noise_pre = generate_data_array_with_errors(55, -55, 110, 0.1)
 data = data_pre[::2]
 data_test_values = data_pre[1::2]
 noise = noise_pre[::2]

@@ -81,6 +81,40 @@ inline double sign(double x) {
     if (x < 0) return -1;
     return 1;
 }
+
+inline void convert_to_deg(std::vector<double> &data) {
+    for (int i = 0; i < data.size(); i++) {
+        data.at(i) = data.at(i) * R2D;
+    }
+}
+
+inline double rmse_45(std::vector<double> data, std::vector<double> gt) {
+    double sum = 0;
+    for (int i = 0; i < data.size(); i++) {
+        if (gt.at(i) < -45 * D2R || gt.at(i) > 45 * D2R) {
+            continue;
+        }
+        sum += pow(data.at(i) - gt.at(i), 2);
+    }
+    return sqrt(sum / data.size());
+}
+
+inline std::vector<double> select_evenly_spaced_points(const std::vector<double>& points, int n) {
+    std::vector<double> selectedPoints;
+    int totalPoints = points.size();
+    if (n <= 0 || n > totalPoints) {
+        return points;
+    }
+    
+    double step = static_cast<double>(totalPoints - 1) / (n - 1);
+    
+    for (int i = 0; i < n; ++i) {
+        int index = static_cast<int>(i * step);
+        selectedPoints.push_back(points[index]);
+    }
+    
+    return selectedPoints;
+}
 template class Vector<double>;
 #endif
 
