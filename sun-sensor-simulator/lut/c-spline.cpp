@@ -9,14 +9,16 @@ CSpline::CSpline(std::vector<double> gt_data, std::vector<double> measurement, i
     y.push_back(gt_data.at(0) - measurement.at(0));
     x.push_back(measurement.at(0));
     for (int i = 0; i < gt_data.size(); ++i) {
-        if (gt_data.at(i) < - 49 * D2R || gt_data.at(i) > 47 * D2R){
+        if (gt_data.at(i) < - 47 * D2R || gt_data.at(i) > 47 * D2R){
             continue;
         }
-        if (i % int (measurement.size() / (num_points-3)) == 0) {
+        else {
             mid_y.push_back(gt_data.at(i) - measurement.at(i));
             mid_x.push_back(measurement.at(i));
         }
     }
+    mid_x = select_evenly_spaced_points(mid_x, num_points - 2);
+    mid_y = select_evenly_spaced_points(mid_y, num_points - 2);
     x.insert(x.end(), mid_x.begin(), mid_x.end());
     y.insert(y.end(), mid_y.begin(), mid_y.end());
     y.push_back(gt_data.at(gt_data.size() - 1) - measurement.at(gt_data.size() - 1));

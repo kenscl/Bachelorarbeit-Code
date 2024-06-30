@@ -1,6 +1,4 @@
-#ifndef __TEST 
-#define __TEST
-
+#pragma once
 #include "matplotlibcpp.h"
 namespace plt = matplotlibcpp;
 
@@ -18,12 +16,13 @@ namespace plt = matplotlibcpp;
 namespace timer = std::chrono;
 #include <vector>
 
-void polyfit_test(std::vector<double> gt_calib, std::vector<double> measurement_calib, std::vector<double> gt_valid, std::vector<double> measurement_valid);
-void sin_fit_test(std::vector<double> gt_calib, std::vector<double> measurement_calib, std::vector<double> gt_valid, std::vector<double> measurement_valid);
-void e_sin_fit_test(std::vector<double> gt_calib, std::vector<double> measurement_calib, std::vector<double> gt_valid, std::vector<double> measurement_valid);
-void alt_sin_fit_test(std::vector<double> gt_calib, std::vector<double> measurement_calib, std::vector<double> gt_valid, std::vector<double> measurement_valid);
-void lut_test(std::vector<double> gt_calib, std::vector<double> measurement_calib, std::vector<double> gt_valid, std::vector<double> measurement_valid);
-void cspline_test(std::vector<double> gt_calib, std::vector<double> measurement_calib, std::vector<double> gt_valid, std::vector<double> measurement_valid);
-void bspline_test(std::vector<double> gt_calib, std::vector<double> measurement_calib, std::vector<double> gt_valid, std::vector<double> measurement_valid);
+void split_vector_odd_even(std::vector<double> init, std::vector<double>& even, std::vector<double>& odd);
 
-#endif
+void polyfit_test(std::vector<double> gt_x, std::vector<double> measurement_x, std::vector<double> gt_y, std::vector<double> measurement_y);
+void sin_fit_test(std::vector<double> gt_x, std::vector<double> measurement_x, std::vector<double> gt_y, std::vector<double> measurement_y);
+void e_sin_fit_test(std::vector<double> gt_x, std::vector<double> measurement_x, std::vector<double> gt_y, std::vector<double> measurement_y);
+void alt_sin_fit_test(std::vector<double> gt_x, std::vector<double> measurement_x, std::vector<double> gt_y, std::vector<double> measurement_y);
+void lut_test(std::vector<double> gt_x, std::vector<double> measurement_x, std::vector<double> gt_y, std::vector<double> measurement_y);
+void cspline_test(std::vector<double> gt_x, std::vector<double> measurement_x, std::vector<double> gt_y, std::vector<double> measurement_y);
+void bspline_test(std::vector<double> gt_x, std::vector<double> measurement_x, std::vector<double> gt_y, std::vector<double> measurement_y);
+

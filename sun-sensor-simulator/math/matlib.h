@@ -115,6 +115,12 @@ inline std::vector<double> select_evenly_spaced_points(const std::vector<double>
     
     return selectedPoints;
 }
+
+inline void print_vector(std::vector<double> vec) {
+    for (uint i = 0; i < vec.size(); ++i) {
+        printf("%f\n", vec.at(i));
+    }
+}
 template class Vector<double>;
 #endif
 

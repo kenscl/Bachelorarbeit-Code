@@ -21,12 +21,12 @@ Sin_Fit::Sin_Fit(int64_t degree, int64_t max_steps, double bound, std::vector<do
     this->degree = degree;
 
     double ak = .1;
-    double bk = .00001;
+    double bk = .001;
     Vector<double> params = Vector<double>((int) 2 * degree);
     this->parameters = params;
     for (int i = 0; i < params.size; i++) {
-        if (i %2 == 0) this->parameters.data.at(i) = 0.0000001;
-        else this->parameters.data.at(i) = 0.0000001;
+        if (i %2 == 0) this->parameters.data.at(i) = 1.;
+        else this->parameters.data.at(i) = 0.0000000000000000000001;
     } 
 
     /*
@@ -78,7 +78,7 @@ Sin_Fit::Sin_Fit(int64_t degree, int64_t max_steps, double bound, std::vector<do
 
         // end regression if no notable improvement happens
         double delta_s = abs(S_new - S);
-        if (delta_s < bound / 100) break;
+        if (delta_s < bound / 1000) break;
 
         ++steps; 
     }

@@ -1,46 +1,86 @@
 #include "test.h"
 #include "matplotlibcpp.h"
 #include <cmath>
+#include <cstdio>
 #include <vector>
 
+void split_vector_odd_even(const std::vector<double> init, std::vector<double>& even, std::vector<double>& odd) {
+    for (uint i = 0; i < init.size(); ++i) {
+        if (i % 2 == 0) {
+            even.push_back(init.at(i));
+        } else {
+            odd.push_back(init.at(i));
+        }
+    }
+}
 
-void polyfit_test(std::vector<double> gt_calib, std::vector<double> measurement_calib, std::vector<double> gt_valid, std::vector<double> measurement_valid) {
-    std::vector<double> index, error, time, size, meas, meas_err;
-    int err_min_index = -1;
-    double err_min = MAXFLOAT;
 
-    convert_to_deg(gt_valid);
+void polyfit_test(std::vector<double> gt_x, std::vector<double> measurement_x, std::vector<double> gt_y, std::vector<double> measurement_y) {
+    std::vector<double> index, error_x, error_y, time, size, meas_x, meas_y, meas_err_x, meas_err_y, error_45_x, error_45_y;
+    int err_min_index_x = -1;
+    int err_min_index_y = -1;
+    double err_min_x = MAXFLOAT;
+    double err_min_y = MAXFLOAT;
 
+    std::vector<double> gt_x_even, gt_x_odd, measurement_x_even, measurement_x_odd, gt_y_even, gt_y_odd, measurement_y_even, measurement_y_odd;
+
+    split_vector_odd_even(gt_x, gt_x_even, gt_x_odd);
+    split_vector_odd_even(measurement_x, measurement_x_even, measurement_x_odd);
+
+    split_vector_odd_even(gt_y, gt_y_even, gt_y_odd);
+    split_vector_odd_even(measurement_y, measurement_y_even, measurement_y_odd);
+
+    convert_to_deg(gt_x_odd);
+    convert_to_deg(gt_y_odd);
     for (uint i = 0; i < 17; ++i) {
-        Polynomial_Fit polyfit(i, gt_calib, measurement_calib);
-        meas = polyfit.calc(measurement_valid);
-        convert_to_deg(meas);
-        double err = rmse(gt_valid, meas);
-        // error
-        index.push_back(i);
-        error.push_back(err);
+        // fit data
+        Polynomial_Fit polyfit_x(i, gt_x_even, measurement_x_even);
+        meas_x = polyfit_x.calc(measurement_x_odd);
+        convert_to_deg(meas_x);
 
-        if (err < err_min) {
-            err_min = err;
-            err_min_index = i;
+
+        Polynomial_Fit polyfit_y(i, gt_y_even, measurement_y_even);
+        meas_y = polyfit_y.calc(measurement_y_odd);
+        convert_to_deg(meas_y);
+
+        // error
+        double err_x = rmse(gt_x_odd, meas_x);
+        double err_y = rmse(gt_y_odd, meas_y);
+
+        index.push_back(i);
+        error_x.push_back(err_x);
+        error_y.push_back(err_y);
+
+        error_45_x.push_back(rmse_45(meas_x, gt_x_odd));
+        error_45_y.push_back(rmse_45(meas_y, gt_y_odd));
+
+        if (err_x < err_min_x) {
+            err_min_x = err_x;
+            err_min_index_x = i;
+        }
+
+        if (err_y < err_min_y) {
+            err_min_y = err_y;
+            err_min_index_y = i;
         }
 
         // size 
-        size.push_back(sizeof(std::vector<double>) + sizeof(double) * polyfit.weights.size());
+        size.push_back(sizeof(std::vector<double>) + sizeof(double) * polyfit_x.weights.size());
 
         // time
         auto start = timer::high_resolution_clock::now();
         for (int j = 0; j < 1000; ++j) {
-            polyfit.calc(measurement_valid);
+            polyfit_x.calc(measurement_y);
         }
 
         auto end = timer::high_resolution_clock::now();
         time.push_back(timer::duration_cast<timer::microseconds>(end - start).count() / 1000.0);
 
-        printf("Degree %d, error %f, size %f, time %f\n", i, err, size.back(), time.back());
+        //printf("Degree %d, error %f, size %f, time %f\n", i, err, size.back(), time.back());
 
     }
-    printf("Minimum error at degree %d with error %f\n", err_min_index, err_min);
+    printf("X: minimum error at degree %d with error %f\n", err_min_index_x, err_min_x);
+    printf("Y: minimum error at degree %d with error %f\n", err_min_index_y, err_min_y);
 
     //error plot
     //plt::figure_size(800, 600);
@@ -48,8 +88,24 @@ void polyfit_test(std::vector<double> gt_calib, std::vector<double> measurement_
     plt::xlabel("DEGREE OF POLYNOMIAL FIT");
     plt::ylabel("RMSE (DEG)");
     plt::grid(true);
-    plt::plot(index, error);
-    std::string filename = "../plots/Polyfit_Count.png";
+    plt::named_plot("X-RMSE", index, error_x);
+    plt::named_plot("Y-RMSE", index, error_y);
+    plt::legend();
+    std::string filename = "../plots/Polyfit_Count.eps";
+    plt::save(filename);
+
+    print_vector(error_45_x);
+    print_vector(error_45_y);
+    plt::cla();
+    plt::clf();
+    plt::title("POLYNOMIAL FIT ERROR BASED ON DEGREE (INNER 45 DEG)");
+    plt::xlabel("DEGREE OF POLYNOMIAL FIT");
+    plt::ylabel("RMSE (DEG)");
+    plt::grid(true);
+    plt::named_plot("X-RMSE 45", index, error_45_x);
+    plt::named_plot("Y-RMSE 45", index, error_45_y);
+    plt::legend();
+    filename = "../plots/Polyfit_45.eps";
     plt::save(filename);
 
     plt::cla();
@@ -59,7 +115,7 @@ void polyfit_test(std::vector<double> gt_calib, std::vector<double> measurement_
     plt::ylabel("TIME [µs]");
     plt::grid(true);
     plt::plot(index, time);
-    filename = "../plots/Polyfit_time.png";
+    filename = "../plots/Polyfit_time.eps";
     plt::save(filename);
 
 
@@ -70,29 +126,39 @@ void polyfit_test(std::vector<double> gt_calib, std::vector<double> measurement_
     plt::ylabel("SIZE IN BYTES");
     plt::grid(true);
     plt::plot(index, size);
-    filename = "../plots/Polyfit_size.png";
+    filename = "../plots/Polyfit_size.eps";
     plt::save(filename);
 
 
     plt::cla();
     plt::clf();
 
+    // fit data
+    Polynomial_Fit polyfit_x(7, gt_x_even, measurement_x_even);
+    meas_x = polyfit_x.calc(measurement_x_odd);
+    convert_to_deg(meas_x);
 
-    Polynomial_Fit polyfit(7, gt_calib, measurement_calib);
-    meas = polyfit.calc(measurement_valid);
-    convert_to_deg(meas);
-    for (uint i = 0; i < meas.size(); ++i) {
-        meas_err.push_back(gt_valid.at(i) - meas.at(i));
+    Polynomial_Fit polyfit_y(7, gt_y_even, measurement_y_even);
+    meas_y = polyfit_y.calc(measurement_y_odd);
+    convert_to_deg(meas_y);
+
+    for (uint i = 0; i < meas_x.size(); ++i) {
+        meas_err_x.push_back(gt_x_odd.at(i) - meas_x.at(i));
+    }
+    for (uint i = 0; i < meas_y.size(); ++i) {
+        meas_err_y.push_back(gt_y_odd.at(i) - meas_y.at(i));
     }
 
     plt::title("POLYNOMIAL FIT");
     plt::grid(true);
-    plt::named_plot("polynomial fit", gt_valid, meas);
-    plt::named_plot("error ", gt_valid, meas_err);
+    plt::named_plot("polynomial fit X-Axis", gt_x_odd, meas_x);
+    plt::named_plot("error X-Axis", gt_x_odd, meas_err_x);
+    plt::named_plot("polynomial fit Y-Axis", gt_y_odd, meas_y);
+    plt::named_plot("error Y-Axis", gt_y_odd, meas_err_y);
     plt::legend();
     plt::xlabel("INCIDENT LIGHT ANGLE [deg]");
     plt::ylabel("ANGULAR RESPONSE [deg]");
-    filename = "../plots/Polyfit.png";
+    filename = "../plots/Polyfit.eps";
     plt::save(filename);
 
 
@@ -100,45 +166,69 @@ void polyfit_test(std::vector<double> gt_calib, std::vector<double> measurement_
     plt::clf();
 }
 
+void sin_fit_test(std::vector<double> gt_x, std::vector<double> measurement_x, std::vector<double> gt_y, std::vector<double> measurement_y) {
+    std::vector<double> index, error_x, error_y, time, size, meas_x, meas_y, meas_err_x, meas_err_y, error_45_x, error_45_y;
+    int err_min_index_x = -1;
+    int err_min_index_y = -1;
+    double err_min_x = MAXFLOAT;
+    double err_min_y = MAXFLOAT;
 
+    std::vector<double> gt_x_even, gt_x_odd, measurement_x_even, measurement_x_odd, gt_y_even, gt_y_odd, measurement_y_even, measurement_y_odd;
 
-void sin_fit_test(std::vector<double> gt_calib, std::vector<double> measurement_calib, std::vector<double> gt_valid, std::vector<double> measurement_valid) {
-    std::vector<double> index, error, time, size, meas, meas_err;
-    int err_min_index = -1;
-    double err_min = MAXFLOAT;
+    split_vector_odd_even(gt_x, gt_x_even, gt_x_odd);
+    split_vector_odd_even(measurement_x, measurement_x_even, measurement_x_odd);
 
-    convert_to_deg(gt_valid);
+    split_vector_odd_even(gt_y, gt_y_even, gt_y_odd);
+    split_vector_odd_even(measurement_y, measurement_y_even, measurement_y_odd);
 
-    for (uint i = 0; i < 7; ++i) {
-        Sin_Fit fit(i, 5000 ,1e-6, gt_calib, measurement_calib);
-        meas = fit.calc(measurement_valid, 1e-3);
-        convert_to_deg(meas);
-        double err = rmse(gt_valid, meas);
+    convert_to_deg(gt_x_odd);
+    convert_to_deg(gt_y_odd);
+    for (uint i = 3; i < 5; ++i) {
+        Sin_Fit fit_x(i, 5000 ,1e-9, gt_x, measurement_x);
+        meas_x = fit_x.calc(measurement_x_odd, 1e-3);
+        convert_to_deg(meas_x);
+
+        Sin_Fit fit_y(i, 5000 ,1e-9, gt_y, measurement_y);
+        meas_y = fit_y.calc(measurement_y_odd, 1e-3);
+        convert_to_deg(meas_y);
+
         // error
-        index.push_back(i);
-        error.push_back(err);
+        double err_x = rmse(gt_x_odd, meas_x);
+        double err_y = rmse(gt_y_odd, meas_y);
 
-        if (err < err_min) {
-            err_min = err;
-            err_min_index = i;
+        index.push_back(i);
+        error_x.push_back(err_x);
+        error_y.push_back(err_y);
+        error_45_x.push_back(rmse_45(meas_x, gt_x_odd));
+        error_45_y.push_back(rmse_45(meas_y, gt_y_odd));
+
+        if (err_x < err_min_x) {
+            err_min_x = err_x;
+            err_min_index_x = i;
+        }
+
+        if (err_y < err_min_y) {
+            err_min_y = err_y;
+            err_min_index_y = i;
         }
 
         // size 
-        size.push_back(sizeof(Vector<double>) + sizeof(double) * fit.parameters.size);
+        size.push_back(sizeof(Vector<double>) + sizeof(double) * fit_x.parameters.size);
 
         // time
         auto start = timer::high_resolution_clock::now();
         for (int j = 0; j < 1000; ++j) {
-            fit.calc(measurement_valid, 1e-3);
+            fit_x.calc(measurement_y, 1e-3);
         }
 
         auto end = timer::high_resolution_clock::now();
         time.push_back(timer::duration_cast<timer::microseconds>(end - start).count() / 1000.0);
 
-        printf("Degree %d, error %f, size %f, time %f\n", i, err, size.back(), time.back());
+        //printf("Degree %d, error %f, size %f, time %f\n", i, err, size.back(), time.back());
 
     }
-    printf("Minimum error at degree %d with error %f\n", err_min_index, err_min);
+    printf("X: minimum error at degree %d with error %f\n", err_min_index_x, err_min_x);
+    printf("Y: minimum error at degree %d with error %f\n", err_min_index_y, err_min_y);
 
     //error plot
     //plt::figure_size(800, 600);
@@ -146,8 +236,22 @@ void sin_fit_test(std::vector<double> gt_calib, std::vector<double> measurement_
     plt::xlabel("DEGREE OF SIN FIT");
     plt::ylabel("RMSE (DEG)");
     plt::grid(true);
-    plt::plot(index, error);
-    std::string filename = "../plots/Sin_fit_Count.png";
+    plt::named_plot("X-RMSE", index, error_x);
+    plt::named_plot("Y-RMSE", index, error_y);
+    plt::legend();
+    std::string filename = "../plots/Sin_fit_Count.eps";
+    plt::save(filename);
+
+    plt::cla();
+    plt::clf();
+    plt::title("SIN FIT ERROR BASED ON DEGREE (INNER 45 DEG)");
+    plt::xlabel("DEGREE OF SIN FIT");
+    plt::ylabel("RMSE (DEG)");
+    plt::grid(true);
+    plt::named_plot("X-RMSE 45", index, error_45_x);
+    plt::named_plot("Y-RMSE 45", index, error_45_y);
+    plt::legend();
+    filename = "../plots/Sin_fit_45.eps";
     plt::save(filename);
 
     plt::cla();
@@ -157,7 +261,7 @@ void sin_fit_test(std::vector<double> gt_calib, std::vector<double> measurement_
     plt::ylabel("TIME [µs]");
     plt::grid(true);
     plt::plot(index, time);
-    filename = "../plots/Sin_fit_time.png";
+    filename = "../plots/Sin_fit_time.eps";
     plt::save(filename);
 
 
@@ -168,7 +272,7 @@ void sin_fit_test(std::vector<double> gt_calib, std::vector<double> measurement_
     plt::ylabel("SIZE IN BYTES");
     plt::grid(true);
     plt::plot(index, size);
-    filename = "../plots/Sin_fit_size.png";
+    filename = "../plots/Sin_fit_size.eps";
     plt::save(filename);
 
 
@@ -176,21 +280,31 @@ void sin_fit_test(std::vector<double> gt_calib, std::vector<double> measurement_
     plt::clf();
 
 
-    Sin_Fit fit(3, 5000 ,1e-6, gt_calib, measurement_calib);
-    meas = fit.calc(measurement_valid, 1e-3);
-    convert_to_deg(meas);
-    for (uint i = 0; i < meas.size(); ++i) {
-        meas_err.push_back(gt_valid.at(i) - meas.at(i));
+    Sin_Fit fit_x(3, 5000 ,1e-6, gt_x, measurement_x);
+    meas_x = fit_x.calc(measurement_x_odd, 1e-3);
+    convert_to_deg(meas_x);
+
+    Sin_Fit fit_y(3, 5000 ,1e-6, gt_y, measurement_y);
+    meas_y = fit_y.calc(measurement_y_odd, 1e-3);
+    convert_to_deg(meas_y);
+
+    for (uint i = 0; i < meas_x.size(); ++i) {
+        meas_err_x.push_back(gt_x_odd.at(i) - meas_x.at(i));
+    }
+    for (uint i = 0; i < meas_y.size(); ++i) {
+        meas_err_y.push_back(gt_y_odd.at(i) - meas_y.at(i));
     }
 
     plt::title("SIN FIT");
     plt::grid(true);
-    plt::named_plot("Sin fit", gt_valid, meas);
-    plt::named_plot("error ", gt_valid, meas_err);
+    plt::named_plot("Sin fit X-Axis", gt_x_odd, meas_x);
+    plt::named_plot("error X-Axis", gt_x_odd, meas_err_x);
+    plt::named_plot("Sin fit Y-Axis", gt_y_odd, meas_y);
+    plt::named_plot("error Y-Axis", gt_y_odd, meas_err_y);
     plt::legend();
     plt::xlabel("INCIDENT LIGHT ANGLE [deg]");
     plt::ylabel("ANGULAR RESPONSE [deg]");
-    filename = "../plots/Sin_fit.png";
+    filename = "../plots/Sin_fit.eps";
     plt::save(filename);
 
 
@@ -200,100 +314,133 @@ void sin_fit_test(std::vector<double> gt_calib, std::vector<double> measurement_
 }
 
 
-void e_sin_fit_test(std::vector<double> gt_calib, std::vector<double> measurement_calib, std::vector<double> gt_valid, std::vector<double> measurement_valid) {
-    std::vector<double> index, error, time, size, meas, meas_err;
+void e_sin_fit_test(std::vector<double> gt_x, std::vector<double> measurement_x, std::vector<double> gt_y, std::vector<double> measurement_y) {
+    std::vector<double> index, error_x, error_y, time, size, meas_x, meas_y, meas_err_x, meas_err_y, error_45_x, error_45_y;
 
-    convert_to_deg(gt_valid);
+    std::vector<double> gt_x_even, gt_x_odd, measurement_x_even, measurement_x_odd, gt_y_even, gt_y_odd, measurement_y_even, measurement_y_odd;
 
-    Extended_sin_fit fit(5000 ,1e-6, gt_calib, measurement_calib);
-    meas = fit.calc(measurement_valid, 1e-3);
-    convert_to_deg(meas);
-    double err = rmse(gt_valid, meas);
+    split_vector_odd_even(gt_x, gt_x_even, gt_x_odd);
+    split_vector_odd_even(measurement_x, measurement_x_even, measurement_x_odd);
+
+    split_vector_odd_even(gt_y, gt_y_even, gt_y_odd);
+    split_vector_odd_even(measurement_y, measurement_y_even, measurement_y_odd);
+
+    convert_to_deg(gt_x_odd);
+    convert_to_deg(gt_y_odd);
+    Extended_sin_fit fit_x(5000 ,1e-6, gt_x_even, measurement_x_even);
+    Extended_sin_fit fit_y(5000 ,1e-6, gt_y_even, measurement_y_even);
+
+    meas_x = fit_x.calc(measurement_x_odd, 1e-3);
+    convert_to_deg(meas_x);
+    double err_x = rmse(gt_x_odd, meas_x);
 
 
+    meas_y = fit_y.calc(measurement_y_odd, 1e-3);
+    convert_to_deg(meas_y);
+    double err_y = rmse(gt_y_odd, meas_y);
 
-    size.push_back(sizeof(Vector<double>) + sizeof(double) * fit.parameters.size);
+    error_45_x.push_back(rmse_45(meas_x, gt_x_odd));
+    error_45_y.push_back(rmse_45(meas_y, gt_y_odd));
+
+    size.push_back(sizeof(Vector<double>) + sizeof(double) * fit_x.parameters.size);
 
     auto start = timer::high_resolution_clock::now();
     for (int j = 0; j < 1000; ++j) {
-        fit.calc(measurement_valid, 1e-3);
+        fit_x.calc(measurement_y, 1e-3);
     }
 
     auto end = timer::high_resolution_clock::now();
     time.push_back(timer::duration_cast<timer::microseconds>(end - start).count() / 1000.0);
 
-    printf("error %f, size %f, time %f\n", err, size.back(), time.back());
-
-    
-
+    printf("X: error %f, size %f, time %f\n", err_x, size.back(), time.back());
+    printf("Y: error %f, size %f, time %f\n", err_y, size.back(), time.back());
+    printf("X: error 45 %f\n", error_45_x.back());
+    printf("Y: error 45 %f\n", error_45_y.back());
 
     plt::cla();
     plt::clf();
 
-
-    for (uint i = 0; i < meas.size(); ++i) {
-        meas_err.push_back(gt_valid.at(i) - meas.at(i));
+    for (uint i = 0; i < meas_x.size(); ++i) {
+        meas_err_x.push_back(gt_x_odd.at(i) - meas_x.at(i));
+        meas_err_y.push_back(gt_y_odd.at(i) - meas_y.at(i));
     }
 
     plt::title("MODEL 2");
     plt::grid(true);
-    plt::named_plot("fit", gt_valid, meas);
-    plt::named_plot("error ", gt_valid, meas_err);
-    plt::legend();
     plt::xlabel("INCIDENT LIGHT ANGLE [deg]");
     plt::ylabel("ANGULAR RESPONSE [deg]");
-    std::string filename = "../plots/e_Sin_fit.png";
+    plt::named_plot("fit X-Axis", gt_x_odd, meas_x);
+    plt::named_plot("error X-Axis", gt_x_odd, meas_err_x);
+    plt::named_plot("fit Y-Axis", gt_y_odd, meas_y);
+    plt::named_plot("error Y-Axis", gt_y_odd, meas_err_y);
+    plt::legend();
+    std::string filename = "../plots/e_Sin_fit.eps";
     plt::save(filename);
-
 
     plt::cla();
     plt::clf();
-
-
 }
-void alt_sin_fit_test(std::vector<double> gt_calib, std::vector<double> measurement_calib, std::vector<double> gt_valid, std::vector<double> measurement_valid) {
-    std::vector<double> index, error, time, size, meas, meas_err;
 
-    convert_to_deg(gt_valid);
+void alt_sin_fit_test(std::vector<double> gt_x, std::vector<double> measurement_x, std::vector<double> gt_y, std::vector<double> measurement_y) {
+    std::vector<double> index, error_x, error_y, time, size, meas_x, meas_y, meas_err_x, meas_err_y, error_45_x, error_45_y;
 
-    Alt_sin_fit fit(5000 ,1e-6, gt_calib, measurement_calib);
-    meas = fit.calc(measurement_valid, 1e-3);
-    convert_to_deg(meas);
-    double err = rmse(gt_valid, meas);
+    std::vector<double> gt_x_even, gt_x_odd, measurement_x_even, measurement_x_odd, gt_y_even, gt_y_odd, measurement_y_even, measurement_y_odd;
 
+    split_vector_odd_even(gt_x, gt_x_even, gt_x_odd);
+    split_vector_odd_even(measurement_x, measurement_x_even, measurement_x_odd);
 
+    split_vector_odd_even(gt_y, gt_y_even, gt_y_odd);
+    split_vector_odd_even(measurement_y, measurement_y_even, measurement_y_odd);
 
-    size.push_back(sizeof(Vector<double>) + sizeof(double) * fit.parameters.size);
+    convert_to_deg(gt_x_odd);
+    convert_to_deg(gt_y_odd);
+
+    Alt_sin_fit fit_x(5000 ,1e-9, gt_x, measurement_x);
+    Alt_sin_fit fit_y(5000 ,1e-9, gt_y, measurement_y);
+    meas_x = fit_x.calc(measurement_x_odd, 1e-3);
+    meas_y = fit_y.calc(measurement_y_odd, 1e-3);
+    convert_to_deg(meas_x);
+    convert_to_deg(meas_y);
+    double err_x = rmse(gt_x_odd, meas_x);
+    double err_y = rmse(gt_y_odd, meas_y);
+    error_45_x.push_back(rmse_45(meas_x, gt_x_odd));
+    error_45_y.push_back(rmse_45(meas_y, gt_y_odd));
+
+    size.push_back(sizeof(Vector<double>) + sizeof(double) * fit_x.parameters.size);
 
     auto start = timer::high_resolution_clock::now();
     for (int j = 0; j < 1000; ++j) {
-        fit.calc(measurement_valid, 1e-3);
+        fit_x.calc(measurement_y, 1e-3);
     }
 
     auto end = timer::high_resolution_clock::now();
     time.push_back(timer::duration_cast<timer::microseconds>(end - start).count() / 1000.0);
 
-    printf("error %f, size %f, time %f\n", err, size.back(), time.back());
-
-    
-
+    printf("X: error %f, size %f, time %f\n", err_x, size.back(), time.back());
+    printf("Y: error %f, size %f, time %f\n", err_y, size.back(), time.back());
+    printf("X: error 45 %f\n", error_45_x.back());
+    printf("Y: error 45 %f\n", error_45_y.back());
 
     plt::cla();
     plt::clf();
 
 
-    for (uint i = 0; i < meas.size(); ++i) {
-        meas_err.push_back(gt_valid.at(i) - meas.at(i));
+    for (uint i = 0; i < meas_x.size(); ++i) {
+        meas_err_x.push_back(gt_x_odd.at(i) - meas_x.at(i));
+        meas_err_y.push_back(gt_y_odd.at(i) - meas_y.at(i));
     }
 
     plt::title("MODEL 3");
     plt::grid(true);
-    plt::named_plot("fit", gt_valid, meas);
-    plt::named_plot("error ", gt_valid, meas_err);
     plt::legend();
+    plt::named_plot("fit X-Axis", gt_x_odd, meas_x);
+    plt::named_plot("error X-Axis", gt_x_odd, meas_err_x);
+    plt::named_plot("fit Y-Axis", gt_y_odd, meas_y);
+    plt::named_plot("error Y-Axis", gt_y_odd, meas_err_y);
     plt::xlabel("INCIDENT LIGHT ANGLE [deg]");
     plt::ylabel("ANGULAR RESPONSE [deg]");
-    std::string filename = "../plots/alt_Sin_fit.png";
+    plt::legend();
+    std::string filename = "../plots/alt_Sin_fit.eps";
     plt::save(filename);
 
 
@@ -303,53 +450,93 @@ void alt_sin_fit_test(std::vector<double> gt_calib, std::vector<double> measurem
 
 }
 
+void lut_test(std::vector<double> gt_x, std::vector<double> measurement_x, std::vector<double> gt_y, std::vector<double> measurement_y) {
+    std::vector<double> index, error_x, error_y, time, size, meas_x, meas_y, meas_err_x, meas_err_y, error_45_x, error_45_y;
+    int err_min_index_x = -1;
+    int err_min_index_y = -1;
+    double err_min_x = MAXFLOAT;
+    double err_min_y = MAXFLOAT;
 
-void lut_test(std::vector<double> gt_calib, std::vector<double> measurement_calib, std::vector<double> gt_valid, std::vector<double> measurement_valid) {
-    std::vector<double> index, error, time, size, meas, meas_err;
-    int err_min_index = -1;
-    double err_min = MAXFLOAT;
+    std::vector<double> gt_x_even, gt_x_odd, measurement_x_even, measurement_x_odd, gt_y_even, gt_y_odd, measurement_y_even, measurement_y_odd;
 
-    convert_to_deg(gt_valid);
+    split_vector_odd_even(gt_x, gt_x_even, gt_x_odd);
+    split_vector_odd_even(measurement_x, measurement_x_even, measurement_x_odd);
 
-    for (uint i = 2; i < 500; i += 10) {
-        LUT fit(gt_calib, measurement_calib, i);
-        meas = fit.calc(measurement_valid);
-        convert_to_deg(meas);
-        double err = rmse(gt_valid, meas);
+    split_vector_odd_even(gt_y, gt_y_even, gt_y_odd);
+    split_vector_odd_even(measurement_y, measurement_y_even, measurement_y_odd);
+
+    convert_to_deg(gt_x_odd);
+    convert_to_deg(gt_y_odd);
+
+    for (uint i = 2; i < 500; i += 1) {
+        LUT fit_x(gt_x_even, measurement_x_even, i);
+        meas_x = fit_x.calc(measurement_x_odd);
+        convert_to_deg(meas_x);
+
+        LUT fit_y(gt_y_even, measurement_y_even, i);
+        meas_y = fit_y.calc(measurement_y_odd);
+        convert_to_deg(meas_y);
+
         // error
-        index.push_back(i);
-        error.push_back(err);
+        double err_x = rmse(gt_x_odd, meas_x);
+        double err_y = rmse(gt_y_odd, meas_y);
 
-        if (err < err_min) {
-            err_min = err;
-            err_min_index = i;
+        index.push_back(i);
+        error_x.push_back(err_x);
+        error_y.push_back(err_y);
+        error_45_x.push_back(rmse_45(meas_x, gt_x_odd));
+        error_45_y.push_back(rmse_45(meas_y, gt_y_odd));
+
+        if (err_x < err_min_x) {
+            err_min_x = err_x;
+            err_min_index_x = i;
+        }
+
+        if (err_y < err_min_y) {
+            err_min_y = err_y;
+            err_min_index_y = i;
         }
 
         // size 
-        size.push_back((sizeof(std::vector<double>) + sizeof(double) * fit.parameters.size()) * 2) ;
+        size.push_back((sizeof(std::vector<double>) + sizeof(double) * fit_x.parameters.size()) * 2) ;
 
         // time
         auto start = timer::high_resolution_clock::now();
         for (int j = 0; j < 1000; ++j) {
-            fit.calc(measurement_valid);
+            fit_x.calc(measurement_y);
         }
 
         auto end = timer::high_resolution_clock::now();
         time.push_back(timer::duration_cast<timer::microseconds>(end - start).count() / 1000.0);
 
-        printf("Degree %d, error %f, size %f, time %f\n", i, err, size.back(), time.back());
+        printf("Degree %d, error x %f, error y %f , size %f, time %f\n", i, err_x, err_y, size.back(), time.back());
 
     }
-    printf("Minimum error at degree %d with error %f\n", err_min_index, err_min);
+    printf("X: minimum error at degree %d with error %f\n", err_min_index_x, err_min_x);
+    printf("Y: minimum error at degree %d with error %f\n", err_min_index_y, err_min_y);
 
     //error plot
     //plt::figure_size(800, 600);
     plt::title("LINEAR INTERPOLATION ERROR BASED ON DEGREE");
     plt::xlabel("DEGREE OF LINEAR INTERPOLATION");
     plt::ylabel("RMSE (DEG)");
+    plt::named_plot("X-RMSE", index, error_x);
+    plt::named_plot("Y-RMSE", index, error_y);
     plt::grid(true);
-    plt::plot(index, error);
-    std::string filename = "../plots/LERP_Count.png";
+    plt::legend();
+    std::string filename = "../plots/LERP_Count.eps";
+    plt::save(filename);
+
+    plt::cla();
+    plt::clf();
+    plt::title("LINEAR INTERPOLATION ERROR BASED ON DEGREE (INNER 45 DEG)");
+    plt::xlabel("DEGREE OF LINEAR INTERPOLATION");
+    plt::ylabel("RMSE (DEG)");
+    plt::named_plot("X-RMSE 45", index, error_45_x);
+    plt::named_plot("Y-RMSE 45", index, error_45_y);
+    plt::grid(true);
+    plt::legend();
+    filename = "../plots/LERP_45.eps";
     plt::save(filename);
 
     plt::cla();
@@ -359,7 +546,7 @@ void lut_test(std::vector<double> gt_calib, std::vector<double> measurement_cali
     plt::ylabel("TIME [µs]");
     plt::grid(true);
     plt::plot(index, time);
-    filename = "../plots/LERP_time.png";
+    filename = "../plots/LERP_time.eps";
     plt::save(filename);
 
 
@@ -370,76 +557,109 @@ void lut_test(std::vector<double> gt_calib, std::vector<double> measurement_cali
     plt::ylabel("SIZE IN BYTES");
     plt::grid(true);
     plt::plot(index, size);
-    filename = "../plots/LERP_size.png";
+    filename = "../plots/LERP_size.eps";
     plt::save(filename);
-
 
     plt::cla();
     plt::clf();
 
+    LUT fit_x(gt_x_even, measurement_x_even, 50);
+    meas_x = fit_x.calc(measurement_x_odd);
+    convert_to_deg(meas_x);
 
+    LUT fit_y(gt_y_even, measurement_y_even, 50);
+    meas_y = fit_y.calc(measurement_y_odd);
+    convert_to_deg(meas_y);
 
-    LUT fit(gt_calib, measurement_calib, 50);
-    meas = fit.calc(measurement_calib);
-
-    convert_to_deg(meas);
-    for (uint i = 0; i < meas.size(); ++i) {
-        meas_err.push_back(gt_valid.at(i) - meas.at(i));
+    for (uint i = 0; i < meas_x.size(); ++i) {
+        meas_err_x.push_back(gt_x_odd.at(i) - meas_x.at(i));
+    }
+    for (uint i = 0; i < meas_y.size(); ++i) {
+        meas_err_y.push_back(gt_y_odd.at(i) - meas_y.at(i));
     }
 
     plt::title("LINEAR INTERPOLATION");
     plt::grid(true);
-    plt::named_plot("Linear Interpolation", gt_valid, meas);
-    plt::named_plot("error ", gt_valid, meas_err);
+    plt::named_plot("Linear interpolation X-Axis", gt_x_odd, meas_x);
+    plt::named_plot("error X-Axis", gt_x_odd, meas_err_x);
+    plt::named_plot("Linear interpolation Y-Axis", gt_y_odd, meas_y);
+    plt::named_plot("error Y-Axis", gt_y_odd, meas_err_y);
     plt::legend();
     plt::xlabel("INCIDENT LIGHT ANGLE [deg]");
     plt::ylabel("ANGULAR RESPONSE [deg]");
-    filename = "../plots/LERP.png";
+    filename = "../plots/LERP.eps";
     plt::save(filename);
-
 
     plt::cla();
     plt::clf();
 }
 
+void cspline_test(std::vector<double> gt_x, std::vector<double> measurement_x, std::vector<double> gt_y, std::vector<double> measurement_y) {
 
-void cspline_test(std::vector<double> gt_calib, std::vector<double> measurement_calib, std::vector<double> gt_valid, std::vector<double> measurement_valid) {
-    std::vector<double> index, error, time, size, meas, meas_err;
-    int err_min_index = -1;
-    double err_min = MAXFLOAT;
+    std::vector<double> index, error_x, error_y, time, size, meas_x, meas_y, meas_err_x, meas_err_y, error_45_x, error_45_y;
+    int err_min_index_x = -1;
+    int err_min_index_y = -1;
+    double err_min_x = MAXFLOAT;
+    double err_min_y = MAXFLOAT;
 
-    convert_to_deg(gt_valid);
+    std::vector<double> gt_x_even, gt_x_odd, measurement_x_even, measurement_x_odd, gt_y_even, gt_y_odd, measurement_y_even, measurement_y_odd;
 
-    for (uint i = 4; i < 120; i += 10) {
-        CSpline fit(gt_calib, measurement_calib, i);
-        meas = fit.calc(measurement_valid);
-        convert_to_deg(meas);
-        double err = rmse(gt_valid, meas);
+    split_vector_odd_even(gt_x, gt_x_even, gt_x_odd);
+    split_vector_odd_even(measurement_x, measurement_x_even, measurement_x_odd);
+
+    split_vector_odd_even(gt_y, gt_y_even, gt_y_odd);
+    split_vector_odd_even(measurement_y, measurement_y_even, measurement_y_odd);
+
+    convert_to_deg(gt_x_odd);
+    convert_to_deg(gt_y_odd);
+
+    for (uint i = 5; i < 120; i += 1) {
+        CSpline fit_x(gt_x, measurement_x, i);
+        meas_x = fit_x.calc(measurement_x_odd);
+        convert_to_deg(meas_x);
+
+        CSpline fit_y(gt_y_even, measurement_y_even, i);
+        meas_y = fit_y.calc(measurement_y_odd);
+        convert_to_deg(meas_y);
+
         // error
-        index.push_back(i);
-        error.push_back(err);
+        double err_x = rmse(gt_x_odd, meas_x);
+        double err_y = rmse(gt_y_odd, meas_y);
 
-        if (err < err_min) {
-            err_min = err;
-            err_min_index = i;
+        index.push_back(i);
+        error_x.push_back(err_x);
+        error_y.push_back(err_y);
+        error_45_x.push_back(rmse_45(meas_x, gt_x_odd));
+        error_45_y.push_back(rmse_45(meas_y, gt_y_odd));
+
+        if (err_x < err_min_x) {
+            err_min_x = err_x;
+            err_min_index_x = i;
+        }
+
+        if (err_y < err_min_y) {
+            err_min_y = err_y;
+            err_min_index_y = i;
         }
 
         // size 
-        size.push_back(sizeof(std::vector<double>) + sizeof(double) * fit.y.size() + sizeof(std::vector<std::vector<double>>) * fit.coefficients.size() * 4);
+        size.push_back(sizeof(std::vector<double>) + sizeof(double) * fit_x.y.size() + sizeof(std::vector<std::vector<double>>) * fit_x.coefficients.size() * 4);
 
         // time
         auto start = timer::high_resolution_clock::now();
         for (int j = 0; j < 1000; ++j) {
-            fit.calc(measurement_valid);
+            fit_x.calc(measurement_y);
         }
 
         auto end = timer::high_resolution_clock::now();
         time.push_back(timer::duration_cast<timer::microseconds>(end - start).count() / 1000.0);
 
-        printf("Degree %d, error %f, size %f, time %f\n", i, err, size.back(), time.back());
+        //printf("Degree %d, error %f, size %f, time %f\n", i, err, size.back(), time.back());
+        printf("Degree %d, error x %f, error y %f, err45 x %f, err45 y %f, size %f, time %f\n", i, err_x, err_y, error_45_x.back(), error_45_y.back(), size.back(), time.back());
 
     }
-    printf("Minimum error at degree %d with error %f\n", err_min_index, err_min);
+    printf("X: minimum error at degree %d with error %f\n", err_min_index_x, err_min_x);
+    printf("Y: minimum error at degree %d with error %f\n", err_min_index_y, err_min_y);
 
     //error plot
     //plt::figure_size(800, 600);
@@ -447,9 +667,25 @@ void cspline_test(std::vector<double> gt_calib, std::vector<double> measurement_
     plt::xlabel("NUMBER OF KNOTS");
     plt::ylabel("RMSE (DEG)");
     plt::grid(true);
-    plt::plot(index, error);
-    std::string filename = "../plots/CSpline_Count.png";
+    plt::named_plot("X-RMSE", index, error_x);
+    plt::named_plot("Y-RMSE", index, error_y);
+    plt::legend();
+    std::string filename = "../plots/CSpline_Count.eps";
     plt::save(filename);
+
+    plt::cla();
+    plt::clf();
+    plt::title("C-SPLINE ERROR BASED ON DEGREE (INNER 45 DEG)");
+    plt::xlabel("NUMBER OF KNOTS");
+    plt::ylabel("RMSE (DEG)");
+    plt::grid(true);
+    plt::named_plot("X-RMSE 45", index, error_45_x);
+    plt::named_plot("Y-RMSE 45", index, error_45_y);
+    plt::legend();
+    filename = "../plots/CSpline_Count.eps";
+    plt::save(filename);
+    plt::cla();
+    plt::clf();
 
     plt::cla();
     plt::clf();
@@ -458,7 +694,7 @@ void cspline_test(std::vector<double> gt_calib, std::vector<double> measurement_
     plt::ylabel("TIME [µs]");
     plt::grid(true);
     plt::plot(index, time);
-    filename = "../plots/CSpline_time.png";
+    filename = "../plots/CSpline_time.eps";
     plt::save(filename);
 
 
@@ -469,75 +705,108 @@ void cspline_test(std::vector<double> gt_calib, std::vector<double> measurement_
     plt::ylabel("SIZE IN BYTES");
     plt::grid(true);
     plt::plot(index, size);
-    filename = "../plots/CSpline_size.png";
+    filename = "../plots/CSpline_size.eps";
     plt::save(filename);
 
 
     plt::cla();
     plt::clf();
 
+    CSpline fit_x(gt_x, measurement_x, 50);
+    meas_x = fit_x.calc(measurement_x_odd);
+    convert_to_deg(meas_x);
 
+    CSpline fit_y(gt_y_even, measurement_y_even, 50);
+    meas_y = fit_y.calc(measurement_y_odd);
+    convert_to_deg(meas_y);
 
-    LUT fit(gt_calib, measurement_calib, 50);
-    meas = fit.calc(measurement_calib);
+    for (uint i = 0; i < meas_x.size(); ++i) {
+        meas_err_x.push_back(gt_x_odd.at(i) - meas_x.at(i));
+    }
 
-    convert_to_deg(meas);
-    for (uint i = 0; i < meas.size(); ++i) {
-        meas_err.push_back(gt_valid.at(i) - meas.at(i));
+    for (uint i = 0; i < meas_y.size(); ++i) {
+        meas_err_y.push_back(gt_y_odd.at(i) - meas_y.at(i));
     }
 
     plt::title("C-SPLINE");
     plt::grid(true);
-    plt::named_plot("C-Spline", gt_valid, meas);
-    plt::named_plot("error ", gt_valid, meas_err);
+    plt::named_plot("C-Spline X-Axis", gt_x_odd, meas_x);
+    plt::named_plot("error X-Axis", gt_x_odd, meas_err_x);
+    plt::named_plot("C-Spline Y-Axis", gt_y_odd, meas_y);
+    plt::named_plot("error Y-Axis", gt_y_odd, meas_err_y);
     plt::legend();
     plt::xlabel("INCIDENT LIGHT ANGLE [deg]");
     plt::ylabel("ANGULAR RESPONSE [deg]");
-    filename = "../plots/CSpline.png";
+    filename = "../plots/CSpline.eps";
     plt::save(filename);
+    plt::show();
 
 
     plt::cla();
     plt::clf();
 }
 
-void bspline_test(std::vector<double> gt_calib, std::vector<double> measurement_calib, std::vector<double> gt_valid, std::vector<double> measurement_valid) {
-    std::vector<double> index, error, time, size, meas, meas_err;
-    int err_min_index = -1;
-    double err_min = MAXFLOAT;
+void bspline_test(std::vector<double> gt_x, std::vector<double> measurement_x, std::vector<double> gt_y, std::vector<double> measurement_y) {
+    std::vector<double> index, error_x, error_y, time, size, meas_x, meas_y, meas_err_x, meas_err_y, error_45_x, error_45_y;
+    int err_min_index_x = -1;
+    int err_min_index_y = -1;
+    double err_min_x = MAXFLOAT;
+    double err_min_y = MAXFLOAT;
 
-    convert_to_deg(gt_valid);
+    std::vector<double> gt_x_even, gt_x_odd, measurement_x_even, measurement_x_odd, gt_y_even, gt_y_odd, measurement_y_even, measurement_y_odd;
 
-    for (uint i = 4; i < 120; i += 10) {
-        BSpline fit(gt_calib, measurement_calib, i);
-        meas = fit.calc(measurement_valid);
-        convert_to_deg(meas);
-        double err = rmse(gt_valid, meas);
+    split_vector_odd_even(gt_x, gt_x_even, gt_x_odd);
+    split_vector_odd_even(measurement_x, measurement_x_even, measurement_x_odd);
+
+    split_vector_odd_even(gt_y, gt_y_even, gt_y_odd);
+    split_vector_odd_even(measurement_y, measurement_y_even, measurement_y_odd);
+
+    convert_to_deg(gt_x_odd);
+    convert_to_deg(gt_y_odd);
+
+    for (uint i = 10; i < 120; i += 1) {
+        BSpline fit_x(gt_x_even, measurement_x_even, i);
+        meas_x = fit_x.calc(measurement_x_odd);
+
+        BSpline fit_y(gt_y_even, measurement_y_even, i);
+        meas_y = fit_y.calc(measurement_y_odd);
+
         // error
-        index.push_back(i);
-        error.push_back(err);
+        double err_x = rmse(gt_x_odd, meas_x);
+        double err_y = rmse(gt_y_odd, meas_y);
 
-        if (err < err_min) {
-            err_min = err;
-            err_min_index = i;
+        index.push_back(i);
+        error_x.push_back(err_x);
+        error_y.push_back(err_y);
+        error_45_x.push_back(rmse_45(meas_x, gt_x_odd));
+        error_45_y.push_back(rmse_45(meas_y, gt_y_odd));
+
+        if (err_x < err_min_x) {
+            err_min_x = err_x;
+            err_min_index_x = i;
+        }
+
+        if (err_y < err_min_y) {
+            err_min_y = err_y;
+            err_min_index_y = i;
         }
 
         // size 
-        size.push_back(sizeof(std::vector<double>) + sizeof(double) * fit.y.size() * 2);
+        size.push_back((sizeof(std::vector<double>) + sizeof(double) * fit_x.y.size()) * 2);
 
         // time
         auto start = timer::high_resolution_clock::now();
         for (int j = 0; j < 1000; ++j) {
-            fit.calc(measurement_valid);
+            fit_x.calc(measurement_y);
         }
 
         auto end = timer::high_resolution_clock::now();
         time.push_back(timer::duration_cast<timer::microseconds>(end - start).count() / 1000.0);
 
-        printf("Degree %d, error %f, size %f, time %f\n", i, err, size.back(), time.back());
-
+        printf("Degree %d, error x %f, error y %f, err45 x %f, err45 y %f, size %f, time %f\n", i, err_x, err_y, error_45_x.back(), error_45_y.back(), size.back(), time.back());
     }
-    printf("Minimum error at degree %d with error %f\n", err_min_index, err_min);
+    printf("X: minimum error at degree %d with error %f\n", err_min_index_x, err_min_x);
+    printf("Y: minimum error at degree %d with error %f\n", err_min_index_y, err_min_y);
 
     //error plot
     //plt::figure_size(800, 600);
@@ -545,8 +814,20 @@ void bspline_test(std::vector<double> gt_calib, std::vector<double> measurement_
     plt::xlabel("NUMBER OF KNOTS");
     plt::ylabel("RMSE (DEG)");
     plt::grid(true);
-    plt::plot(index, error);
-    std::string filename = "../plots/BSpline_Count.png";
+    plt::named_plot("X-RMSE", index, error_x);
+    plt::named_plot("Y-RMSE", index, error_y);
+    std::string filename = "../plots/BSpline_Count.eps";
+    plt::save(filename);
+
+    plt::cla();
+    plt::clf();
+    plt::title("B-SPLINE ERROR BASED ON DEGREE (INNER 45 DEG)");
+    plt::xlabel("NUMBER OF KNOTS");
+    plt::ylabel("RMSE (DEG)");
+    plt::grid(true);
+    plt::named_plot("X-RMSE 45", index, error_45_x);
+    plt::named_plot("Y-RMSE 45", index, error_45_y);
+    filename = "../plots/BSpline_Count.eps";
     plt::save(filename);
 
     plt::cla();
@@ -556,7 +837,7 @@ void bspline_test(std::vector<double> gt_calib, std::vector<double> measurement_
     plt::ylabel("TIME [µs]");
     plt::grid(true);
     plt::plot(index, time);
-    filename = "../plots/BSpline_time.png";
+    filename = "../plots/BSpline_time.eps";
     plt::save(filename);
 
 
@@ -567,31 +848,39 @@ void bspline_test(std::vector<double> gt_calib, std::vector<double> measurement_
     plt::ylabel("SIZE IN BYTES");
     plt::grid(true);
     plt::plot(index, size);
-    filename = "../plots/BSpline_size.png";
+    filename = "../plots/BSpline_size.eps";
     plt::save(filename);
 
 
     plt::cla();
     plt::clf();
 
+    BSpline fit_x(gt_x, measurement_x, 50);
+    meas_x = fit_x.calc(measurement_x);
 
+    BSpline fit_y(gt_y_even, measurement_y_even, 50);
+    meas_y = fit_y.calc(measurement_y_odd);
 
-    LUT fit(gt_calib, measurement_calib, 50);
-    meas = fit.calc(measurement_calib);
-
-    convert_to_deg(meas);
-    for (uint i = 0; i < meas.size(); ++i) {
-        meas_err.push_back(gt_valid.at(i) - meas.at(i));
+    for (uint i = 0; i < meas_x.size(); ++i) {
+        meas_err_x.push_back(gt_x_odd.at(i) - meas_x.at(i));
     }
+    convert_to_deg(meas_x);
+
+    for (uint i = 0; i < meas_y.size(); ++i) {
+        meas_err_y.push_back(gt_y_odd.at(i) - meas_y.at(i));
+    }
+    convert_to_deg(meas_y);
 
     plt::title("B-SPLINE");
     plt::grid(true);
-    plt::named_plot("C-Spline", gt_valid, meas);
-    plt::named_plot("error ", gt_valid, meas_err);
+    plt::named_plot("B-Spline X-Axis", gt_x_odd, meas_x);
+    plt::named_plot("error X-Axis", gt_x_odd, meas_err_x);
+    plt::named_plot("B-Spline Y-Axis", gt_y_odd, meas_y);
+    plt::named_plot("error Y-Axis", gt_y_odd, meas_err_y);
     plt::legend();
     plt::xlabel("INCIDENT LIGHT ANGLE [deg]");
     plt::ylabel("ANGULAR RESPONSE [deg]");
-    filename = "../plots/BSpline.png";
+    filename = "../plots/BSpline.eps";
     plt::save(filename);
 
 

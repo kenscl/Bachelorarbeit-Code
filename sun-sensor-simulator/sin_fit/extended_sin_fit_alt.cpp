@@ -31,7 +31,7 @@ Matrix<double> Alt_sin_fit::Jacobian(const std::vector<double> &gt_data) {
 }
 Alt_sin_fit::Alt_sin_fit(int64_t max_steps, double bound, std::vector<double> gt_data, std::vector<double> measurement) {
     double ak = .1;
-    double bk = .000001;
+    double bk = .1;
     Vector<double> params = Vector<double>(6);
     for (int i = 0; i < params.size; i++) {
         params.data.at(i) = 1;
