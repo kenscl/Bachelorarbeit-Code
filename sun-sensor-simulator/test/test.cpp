@@ -22,6 +22,7 @@ void polyfit_test(std::vector<double> gt_x, std::vector<double> measurement_x, s
     double err_min_x = MAXFLOAT;
     double err_min_y = MAXFLOAT;
 
+
     std::vector<double> gt_x_even, gt_x_odd, measurement_x_even, measurement_x_odd, gt_y_even, gt_y_odd, measurement_y_even, measurement_y_odd;
 
     split_vector_odd_even(gt_x, gt_x_even, gt_x_odd);
@@ -76,7 +77,8 @@ void polyfit_test(std::vector<double> gt_x, std::vector<double> measurement_x, s
         auto end = timer::high_resolution_clock::now();
         time.push_back(timer::duration_cast<timer::microseconds>(end - start).count() / 1000.0);
 
-        //printf("Degree %d, error %f, size %f, time %f\n", i, err, size.back(), time.back());
+
+        printf("Degree %d, error x %f, error y %f, err45 x %f, err45 y %f, size %f, time %f\n", i, err_x, err_y, error_45_x.back(), error_45_y.back(), size.back(), time.back());
 
     }
     printf("X: minimum error at degree %d with error %f\n", err_min_index_x, err_min_x);
@@ -225,6 +227,7 @@ void sin_fit_test(std::vector<double> gt_x, std::vector<double> measurement_x, s
         time.push_back(timer::duration_cast<timer::microseconds>(end - start).count() / 1000.0);
 
         //printf("Degree %d, error %f, size %f, time %f\n", i, err, size.back(), time.back());
+        printf("Degree %d, error x %f, error y %f, err45 x %f, err45 y %f, size %f, time %f\n", i, err_x, err_y, error_45_x.back(), error_45_y.back(), size.back(), time.back());
 
     }
     printf("X: minimum error at degree %d with error %f\n", err_min_index_x, err_min_x);
@@ -440,8 +443,10 @@ void alt_sin_fit_test(std::vector<double> gt_x, std::vector<double> measurement_
     plt::xlabel("INCIDENT LIGHT ANGLE [deg]");
     plt::ylabel("ANGULAR RESPONSE [deg]");
     plt::legend();
+    plt::ylim(-65,65);
     std::string filename = "../plots/alt_Sin_fit.eps";
     plt::save(filename);
+    plt::show();
 
 
     plt::cla();
@@ -468,106 +473,108 @@ void lut_test(std::vector<double> gt_x, std::vector<double> measurement_x, std::
     convert_to_deg(gt_x_odd);
     convert_to_deg(gt_y_odd);
 
-    for (uint i = 2; i < 500; i += 1) {
-        LUT fit_x(gt_x_even, measurement_x_even, i);
-        meas_x = fit_x.calc(measurement_x_odd);
-        convert_to_deg(meas_x);
+    //for (uint i = 5; i < 120; i += 1) {
+    //    LUT fit_x(gt_x_even, measurement_x_even, i);
+    //    meas_x = fit_x.calc(measurement_x_odd);
+    //    convert_to_deg(meas_x);
 
-        LUT fit_y(gt_y_even, measurement_y_even, i);
-        meas_y = fit_y.calc(measurement_y_odd);
-        convert_to_deg(meas_y);
+    //    LUT fit_y(gt_y_even, measurement_y_even, i);
+    //    meas_y = fit_y.calc(measurement_y_odd);
+    //    convert_to_deg(meas_y);
 
-        // error
-        double err_x = rmse(gt_x_odd, meas_x);
-        double err_y = rmse(gt_y_odd, meas_y);
+    //    // error
+    //    double err_x = rmse(gt_x_odd, meas_x);
+    //    double err_y = rmse(gt_y_odd, meas_y);
 
-        index.push_back(i);
-        error_x.push_back(err_x);
-        error_y.push_back(err_y);
-        error_45_x.push_back(rmse_45(meas_x, gt_x_odd));
-        error_45_y.push_back(rmse_45(meas_y, gt_y_odd));
+    //    index.push_back(i);
+    //    error_x.push_back(err_x);
+    //    error_y.push_back(err_y);
+    //    error_45_x.push_back(rmse_45(meas_x, gt_x_odd));
+    //    error_45_y.push_back(rmse_45(meas_y, gt_y_odd));
 
-        if (err_x < err_min_x) {
-            err_min_x = err_x;
-            err_min_index_x = i;
-        }
+    //    if (err_x < err_min_x) {
+    //        err_min_x = err_x;
+    //        err_min_index_x = i;
+    //    }
 
-        if (err_y < err_min_y) {
-            err_min_y = err_y;
-            err_min_index_y = i;
-        }
+    //    if (err_y < err_min_y) {
+    //        err_min_y = err_y;
+    //        err_min_index_y = i;
+    //    }
 
-        // size 
-        size.push_back((sizeof(std::vector<double>) + sizeof(double) * fit_x.parameters.size()) * 2) ;
+    //    // size 
+    //    size.push_back((sizeof(std::vector<double>) + sizeof(double) * fit_x.parameters.size()) * 2) ;
 
-        // time
-        auto start = timer::high_resolution_clock::now();
-        for (int j = 0; j < 1000; ++j) {
-            fit_x.calc(measurement_y);
-        }
+    //    // time
+    //    auto start = timer::high_resolution_clock::now();
+    //    for (int j = 0; j < 1000; ++j) {
+    //        fit_x.calc(measurement_y);
+    //    }
 
-        auto end = timer::high_resolution_clock::now();
-        time.push_back(timer::duration_cast<timer::microseconds>(end - start).count() / 1000.0);
+    //    auto end = timer::high_resolution_clock::now();
+    //    time.push_back(timer::duration_cast<timer::microseconds>(end - start).count() / 1000.0);
 
-        printf("Degree %d, error x %f, error y %f , size %f, time %f\n", i, err_x, err_y, size.back(), time.back());
+    //    printf("Degree %d, error x %f, error y %f, err45 x %f, err45 y %f, size %f, time %f\n", i, err_x, err_y, error_45_x.back(), error_45_y.back(), size.back(), time.back());
 
-    }
-    printf("X: minimum error at degree %d with error %f\n", err_min_index_x, err_min_x);
-    printf("Y: minimum error at degree %d with error %f\n", err_min_index_y, err_min_y);
+    //}
+    //printf("X: minimum error at degree %d with error %f\n", err_min_index_x, err_min_x);
+    //printf("Y: minimum error at degree %d with error %f\n", err_min_index_y, err_min_y);
 
-    //error plot
-    //plt::figure_size(800, 600);
-    plt::title("LINEAR INTERPOLATION ERROR BASED ON DEGREE");
-    plt::xlabel("DEGREE OF LINEAR INTERPOLATION");
-    plt::ylabel("RMSE (DEG)");
-    plt::named_plot("X-RMSE", index, error_x);
-    plt::named_plot("Y-RMSE", index, error_y);
-    plt::grid(true);
-    plt::legend();
+    ////error plot
+    ////plt::figure_size(800, 600);
+    //plt::title("LINEAR INTERPOLATION ERROR BASED ON DEGREE");
+    //plt::xlabel("DEGREE OF LINEAR INTERPOLATION");
+    //plt::ylabel("RMSE (DEG)");
+    //plt::named_plot("X-RMSE", index, error_x);
+    //plt::named_plot("Y-RMSE", index, error_y);
+    //plt::grid(true);
+    //plt::legend();
+    //plt::ylim(0., 3.);
     std::string filename = "../plots/LERP_Count.eps";
-    plt::save(filename);
+    //plt::save(filename);
+
+    //plt::cla();
+    //plt::clf();
+    //plt::title("LINEAR INTERPOLATION ERROR BASED ON DEGREE (INNER 45 DEG)");
+    //plt::xlabel("DEGREE OF LINEAR INTERPOLATION");
+    //plt::ylabel("RMSE (DEG)");
+    //plt::named_plot("X-RMSE 45", index, error_45_x);
+    //plt::named_plot("Y-RMSE 45", index, error_45_y);
+    //plt::grid(true);
+    //plt::legend();
+    //plt::ylim(0., 0.05);
+    //filename = "../plots/LERP_45.eps";
+    //plt::save(filename);
+
+    //plt::cla();
+    //plt::clf();
+    //plt::title("LINEAR INTERPOLATION TIME BASED ON DEGREE");
+    //plt::xlabel("DEGREE OF LINEAR INTERPOLATION");
+    //plt::ylabel("TIME [µs]");
+    //plt::grid(true);
+    //plt::plot(index, time);
+    //filename = "../plots/LERP_time.eps";
+    //plt::save(filename);
+
+
+    //plt::cla();
+    //plt::clf();
+    //plt::title("LINEAR INTERPOLATION SIZE BASED ON DEGREE");
+    //plt::xlabel("DEGREE OF LINEAR INTERPOLATION");
+    //plt::ylabel("SIZE IN BYTES");
+    //plt::grid(true);
+    //plt::plot(index, size);
+    //filename = "../plots/LERP_size.eps";
+    //plt::save(filename);
 
     plt::cla();
     plt::clf();
-    plt::title("LINEAR INTERPOLATION ERROR BASED ON DEGREE (INNER 45 DEG)");
-    plt::xlabel("DEGREE OF LINEAR INTERPOLATION");
-    plt::ylabel("RMSE (DEG)");
-    plt::named_plot("X-RMSE 45", index, error_45_x);
-    plt::named_plot("Y-RMSE 45", index, error_45_y);
-    plt::grid(true);
-    plt::legend();
-    filename = "../plots/LERP_45.eps";
-    plt::save(filename);
 
-    plt::cla();
-    plt::clf();
-    plt::title("LINEAR INTERPOLATION TIME BASED ON DEGREE");
-    plt::xlabel("DEGREE OF LINEAR INTERPOLATION");
-    plt::ylabel("TIME [µs]");
-    plt::grid(true);
-    plt::plot(index, time);
-    filename = "../plots/LERP_time.eps";
-    plt::save(filename);
-
-
-    plt::cla();
-    plt::clf();
-    plt::title("LINEAR INTERPOLATION SIZE BASED ON DEGREE");
-    plt::xlabel("DEGREE OF LINEAR INTERPOLATION");
-    plt::ylabel("SIZE IN BYTES");
-    plt::grid(true);
-    plt::plot(index, size);
-    filename = "../plots/LERP_size.eps";
-    plt::save(filename);
-
-    plt::cla();
-    plt::clf();
-
-    LUT fit_x(gt_x_even, measurement_x_even, 50);
+    LUT fit_x(gt_x_even, measurement_x_even, 5);
     meas_x = fit_x.calc(measurement_x_odd);
     convert_to_deg(meas_x);
 
-    LUT fit_y(gt_y_even, measurement_y_even, 50);
+    LUT fit_y(gt_y_even, measurement_y_even, 5);
     meas_y = fit_y.calc(measurement_y_odd);
     convert_to_deg(meas_y);
 
@@ -670,6 +677,7 @@ void cspline_test(std::vector<double> gt_x, std::vector<double> measurement_x, s
     plt::named_plot("X-RMSE", index, error_x);
     plt::named_plot("Y-RMSE", index, error_y);
     plt::legend();
+    plt::ylim(0., 5.);
     std::string filename = "../plots/CSpline_Count.eps";
     plt::save(filename);
 
@@ -682,7 +690,8 @@ void cspline_test(std::vector<double> gt_x, std::vector<double> measurement_x, s
     plt::named_plot("X-RMSE 45", index, error_45_x);
     plt::named_plot("Y-RMSE 45", index, error_45_y);
     plt::legend();
-    filename = "../plots/CSpline_Count.eps";
+    plt::ylim(0., .1);
+    filename = "../plots/CSpline_45.eps";
     plt::save(filename);
     plt::cla();
     plt::clf();
@@ -767,9 +776,11 @@ void bspline_test(std::vector<double> gt_x, std::vector<double> measurement_x, s
     for (uint i = 10; i < 120; i += 1) {
         BSpline fit_x(gt_x_even, measurement_x_even, i);
         meas_x = fit_x.calc(measurement_x_odd);
+        convert_to_deg(meas_x);
 
         BSpline fit_y(gt_y_even, measurement_y_even, i);
         meas_y = fit_y.calc(measurement_y_odd);
+        convert_to_deg(meas_y);
 
         // error
         double err_x = rmse(gt_x_odd, meas_x);
@@ -816,7 +827,10 @@ void bspline_test(std::vector<double> gt_x, std::vector<double> measurement_x, s
     plt::grid(true);
     plt::named_plot("X-RMSE", index, error_x);
     plt::named_plot("Y-RMSE", index, error_y);
+    plt::ylim(0, 10);
     std::string filename = "../plots/BSpline_Count.eps";
+    plt::ylim(0., 5.);
+    plt::legend();
     plt::save(filename);
 
     plt::cla();
@@ -827,7 +841,8 @@ void bspline_test(std::vector<double> gt_x, std::vector<double> measurement_x, s
     plt::grid(true);
     plt::named_plot("X-RMSE 45", index, error_45_x);
     plt::named_plot("Y-RMSE 45", index, error_45_y);
-    filename = "../plots/BSpline_Count.eps";
+    plt::legend();
+    filename = "../plots/BSpline_45.eps";
     plt::save(filename);
 
     plt::cla();
@@ -855,21 +870,21 @@ void bspline_test(std::vector<double> gt_x, std::vector<double> measurement_x, s
     plt::cla();
     plt::clf();
 
-    BSpline fit_x(gt_x, measurement_x, 50);
-    meas_x = fit_x.calc(measurement_x);
+    BSpline fit_x(gt_x_even, measurement_x_even, 50);
+    meas_x = fit_x.calc(measurement_x_odd);
+    convert_to_deg(meas_x);
 
     BSpline fit_y(gt_y_even, measurement_y_even, 50);
     meas_y = fit_y.calc(measurement_y_odd);
+    convert_to_deg(meas_y);
 
     for (uint i = 0; i < meas_x.size(); ++i) {
         meas_err_x.push_back(gt_x_odd.at(i) - meas_x.at(i));
     }
-    convert_to_deg(meas_x);
 
     for (uint i = 0; i < meas_y.size(); ++i) {
         meas_err_y.push_back(gt_y_odd.at(i) - meas_y.at(i));
     }
-    convert_to_deg(meas_y);
 
     plt::title("B-SPLINE");
     plt::grid(true);
@@ -882,6 +897,7 @@ void bspline_test(std::vector<double> gt_x, std::vector<double> measurement_x, s
     plt::ylabel("ANGULAR RESPONSE [deg]");
     filename = "../plots/BSpline.eps";
     plt::save(filename);
+    plt::show();
 
 
     plt::cla();

@@ -55,9 +55,9 @@ int main () {
     //sin_fit_test(stage_angle, X, stage_angle_y, X_y);
     //e_sin_fit_test(stage_angle, X, stage_angle_y, X_y);
     //alt_sin_fit_test(stage_angle, X, stage_angle_y, X_y);
-    //lut_test(stage_angle, X, stage_angle_y, X_y);
+    lut_test(stage_angle, X, stage_angle_y, X_y);
     //cspline_test(stage_angle, X, stage_angle_y, X_y);
-    bspline_test(stage_angle, X, stage_angle_y, X_y);
+    //bspline_test(stage_angle, X, stage_angle_y, X_y);
 
 
  //   Polynomial_Fit pf(10, stage_angle, X);
